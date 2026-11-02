@@ -2,205 +2,270 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>גיט ב-5 דקות</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17163a">
+<title>הצילו את החומוס: משחק גיט</title>
 <style>
-:root{
-  --bg:#f6f2ea;--card:#fffdf9;--ink:#20242e;--dim:#6b6f7b;--line:#e2dccf;
-  --wd:#bf5408;--stage:#7231d6;--repo:#0c7a6d;--remote:#1b55d0;
-  --term:#14171f;--term-ink:#d9dde6;--ok:#127a3e;
-  --mono:ui-monospace,"Cascadia Code",Menlo,Consolas,"DejaVu Sans Mono",monospace;
-}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI","Noto Sans Hebrew","Arial Hebrew",Arial,system-ui,sans-serif}
-button{font:inherit;cursor:pointer}
-button:focus-visible,input:focus-visible,textarea:focus-visible,.chip:focus-visible{outline:2px solid var(--remote);outline-offset:2px}
-code{font-family:var(--mono);font-size:.9em;background:#ece6d8;padding:1px 5px;border-radius:4px;direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+:root{--bg:#17163a;--panel:#232255;--ink:#fff;--dim:#b4b3d8;--paper:#fff8e8;--paper-ink:#3b2f1e;
+  --green:#3ddc84;--green-d:#1f9d5a;--red:#ff6b6b;--gold:#ffc83d;
+  --wd:#ff9f43;--stage:#a66bff;--repo:#2ed8b6;--remote:#54a0ff;
+  --mono:ui-monospace,Menlo,Consolas,"DejaVu Sans Mono",monospace}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#0f0e28}
+body{color:var(--ink);font:16px/1.35 "Segoe UI","Noto Sans Hebrew","Arial Hebrew",Arial,system-ui,sans-serif;touch-action:manipulation;overscroll-behavior:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+#app{height:100vh;height:100dvh;max-width:480px;margin:auto;background:var(--bg);display:flex;flex-direction:column;gap:7px;padding:8px 10px calc(10px + env(safe-area-inset-bottom));overflow:hidden}
 
-.app{height:100vh;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr;min-height:620px}
-header{display:flex;align-items:center;gap:16px;padding:8px 16px;background:var(--ink);color:#fff}
-header h1{font-size:17px;margin:0;white-space:nowrap}
-.progress{flex:1;display:flex;align-items:center;gap:10px;min-width:0}
-.bar{flex:1;height:8px;background:#ffffff2e;border-radius:9px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:#f5b53f;transition:width .35s}
-.where{font-size:13px;color:#cfd3dc;white-space:nowrap}
-.hbtn{background:none;border:1px solid #ffffff55;color:#fff;border-radius:6px;padding:3px 10px;font-size:13px;white-space:nowrap}
-.hbtn:hover{background:#ffffff1c}
+.top{display:flex;align-items:center;gap:8px;flex:none}
+.segs{flex:1;display:flex;gap:4px}
+.segs i{flex:1;height:9px;border-radius:9px;background:#ffffff22;overflow:hidden;display:block}
+.segs b{display:block;height:100%;width:0;background:var(--gold);border-radius:9px;transition:width .3s}
+.icon{width:34px;height:30px;border-radius:9px;background:#ffffff14;font-size:15px;flex:none}
+.icon.lang{width:58px;font-size:13px;font-weight:800;color:var(--gold);white-space:nowrap}
 
-.main{display:grid;grid-template-columns:350px minmax(0,1fr);min-height:0}
-.mission{background:var(--card);border-inline-end:1px solid var(--line);padding:16px 18px;overflow:auto}
-.chapter{font-size:12px;font-weight:700;color:var(--dim);letter-spacing:.02em}
-.mission h2{font-size:19px;line-height:1.3;margin:2px 0 8px}
-.mission p{margin:0 0 10px}
-.actions{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
-.action{background:#fff3df;border:1px solid #e3b878;border-radius:8px;padding:6px 12px;color:#6f3d00;font-weight:600}
-.action:hover:not(:disabled){background:#ffe8c4}
-.action:disabled{opacity:.5;cursor:default}
-.chips{display:flex;flex-direction:column;gap:6px;margin:10px 0}
-.chip{display:block;width:100%;direction:ltr;text-align:left;background:var(--term);color:#ffe9a8;border:0;border-radius:7px;padding:8px 11px;font:13.5px var(--mono);overflow-wrap:anywhere}
-.chip:hover{background:#262b38}
-.chiphint{font-size:12.5px;color:var(--dim);margin:-4px 0 8px}
-.linkbtn{background:none;border:0;padding:0;color:var(--remote);text-decoration:underline;font-size:14px}
-.done{background:#e8f6ec;border:1px solid #a9dcb9;border-radius:9px;padding:10px 12px;margin-top:12px;animation:rise .3s ease}
-.done b:first-child{color:var(--ok)}
-.next{margin-top:10px;width:100%;background:var(--ok);color:#fff;border:0;border-radius:8px;padding:9px;font-weight:700}
-.next:hover{background:#0e6532}
-.kbd{font-size:12px;color:var(--dim);text-align:center;margin-top:5px}
-@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bubble{flex:none;min-height:82px;background:var(--panel);border-radius:14px;padding:8px 12px;display:flex;flex-direction:column;justify-content:center}
+.aha{font-size:14px;color:var(--green);min-height:0;animation:pop .25s}
+.aha.bad{color:#ffb3b3}
+.goal{font-size:18px;font-weight:800;line-height:1.25}
 
-.work{display:grid;grid-template-rows:auto minmax(0,1fr);gap:10px;padding:10px 12px;min-width:0;min-height:0}
-.scopes{display:grid;grid-template-columns:minmax(0,3fr) 46px minmax(0,1fr);font-size:12px;font-weight:700;color:var(--dim);margin-bottom:3px;text-align:center}
-.scopes span{border-bottom:2px solid #cfc7b4;padding-bottom:1px}
-.scopes span:last-child{grid-column:3}
-.zones{display:grid;grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr) 46px minmax(0,1fr) 46px minmax(0,1fr)}
-.zone{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:9px;padding:7px 9px;height:172px;overflow:auto;transition:box-shadow .25s}
-.zone.focus{box-shadow:0 0 0 2px var(--c)}
-.zone.hit{animation:hit .5s}
-@keyframes hit{40%{background:color-mix(in srgb,var(--c) 16%,white)}}
-.zone h3{margin:0;font-size:14px;color:var(--c)}
-.zone .sub{font-size:11.5px;color:var(--dim);line-height:1.3;margin-bottom:5px}
-.empty{font-size:12px;color:var(--dim);font-style:italic}
-.arrows{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;font:11px var(--mono);color:var(--dim)}
-.arrows div{display:flex;flex-direction:column;align-items:center;line-height:1.05}
-.arrows b{font-size:17px;font-weight:400;color:var(--ink)}
-.file{display:block;width:100%;text-align:start;background:#fff;border:1px solid var(--line);border-radius:6px;padding:3px 7px;margin-bottom:5px}
-button.file:hover{border-color:var(--wd)}
-.fname{display:flex;justify-content:space-between;align-items:center;gap:5px;font:12px var(--mono);direction:ltr}
-.fname span:first-child{overflow:hidden;text-overflow:ellipsis}
-.badge{font:700 10px var(--mono);border-radius:4px;padding:0 4px;color:#fff;white-space:nowrap}
-.b-U{background:#b3261e}.b-M{background:#b86e00}.b-C{background:#b3261e}.b-ok{background:var(--repo)}.b-A{background:var(--stage)}.b-D{background:#555}.b-I{background:#888}
-.fbody{unicode-bidi:plaintext;text-align:start;margin:2px 0 0;font:11.5px/1.32 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;color:#444}
-.repoinfo{font-size:12.5px}
-.hash{font-family:var(--mono);color:var(--repo);font-weight:700}
-.friend{margin-top:6px;font-size:12px;background:#e9efff;border:1px solid #b4c6f5;color:#173d96;border-radius:6px;padding:2px 7px}
+.stations{flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;position:relative}
+.st{--c:#fff;display:block;width:100%;background:var(--panel);border-radius:12px;border-bottom:4px solid var(--c);padding:5px 2px 4px;text-align:center;position:relative;cursor:default;transition:opacity .3s,filter .3s}
+.st .e{font-size:27px;line-height:1.1;display:block}
+.st .n{display:block;font-size:12.5px;font-weight:700;color:var(--c)}
+.st .s{display:block;font-size:11.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:15px}
+.st.off{opacity:.35;filter:grayscale(1)}
+.st.hit{animation:bump .45s}
+.st.glow{animation:glow 1s infinite;cursor:pointer}
+.st .pip{position:absolute;top:3px;inset-inline-end:5px;font-size:16px;animation:pop .25s}
+@keyframes bump{40%{transform:scale(1.13)}}
+@keyframes glow{50%{box-shadow:0 0 0 4px var(--gold)}}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.place{flex:none;display:grid;grid-template-columns:3fr 1fr;gap:6px;font-size:11px;color:var(--dim);text-align:center;margin-bottom:-4px}
 
-.bottom{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;min-height:0}
-.term{background:var(--term);color:var(--term-ink);border-radius:10px;display:flex;flex-direction:column;min-height:0;direction:ltr;font:13px/1.45 var(--mono)}
-.tout{flex:1;overflow:auto;padding:10px 12px;min-height:0}
-.tout div{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.2em}
-.t-cmd{color:#fff}.t-prompt{color:#7fd6a4}
-.t-g{color:#5ee08f}.t-r{color:#ff7b72}.t-y{color:#f2cc60}.t-c{color:#7cc4ff}.t-d{color:#8b91a0}
-.t-tip{direction:rtl;text-align:right;color:#f5c86b;font-family:"Segoe UI","Noto Sans Hebrew",Arial,sans-serif;font-size:13px}
-.tin{display:flex;align-items:center;gap:7px;padding:8px 12px;border-top:1px solid #2c313f}
-.tin label{color:#7fd6a4;white-space:nowrap}
-.tin input{flex:1;min-width:0;background:none;border:0;color:#fff;font:inherit;outline:none;direction:ltr}
-.tin button{background:#2a7a4e;border:0;border-radius:6px;color:#fff;padding:2px 11px;font-size:14px}
+.paper{flex:1;min-height:64px;overflow:auto;background:var(--paper);color:var(--paper-ink);border-radius:12px;padding:6px 12px;position:relative;width:100%;display:block;text-align:start}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:6px;font:700 12px var(--mono);direction:ltr;color:#8a7a5c;margin-bottom:2px}
+.pill{font:700 11px "Segoe UI",Arial,sans-serif;border-radius:9px;padding:0 7px;color:#fff;white-space:nowrap}
+.l{font-size:17px;line-height:1.3;unicode-bidi:plaintext;text-align:start;min-height:1.3em}
+.l.new{animation:newl .9s}
+@keyframes newl{0%{background:#ffe08a;transform:scale(1.04)}100%{background:transparent}}
+.l.add{background:#c9f5d6;color:#0b6b35;font-weight:700}
+.l.del{background:#ffd9d6;color:#a3211a;text-decoration:line-through}
+.l.mark{font:12px var(--mono);color:#b3261e;direction:ltr;text-align:left;unicode-bidi:isolate}
+.l.ours{background:#dcebff}.l.theirs{background:#ffe7c7}
+.l.log{font-size:14px;display:flex;gap:8px;unicode-bidi:normal}
+.l.log b{font:700 12.5px var(--mono);color:#0c7a6d}
+.burnt{display:flex;height:calc(100% - 4px);overflow:hidden;align-items:center;justify-content:center;font-size:44px;animation:bump .6s infinite}
 
-.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:0;min-width:0}
-.tabs{display:flex;border-bottom:1px solid var(--line)}
-.tabs button{flex:1;background:none;border:0;padding:6px;font-size:13px;color:var(--dim);border-bottom:3px solid transparent}
-.tabs button[aria-selected=true]{color:var(--ink);font-weight:700;border-bottom-color:var(--repo)}
-.pbody{flex:1;overflow:auto;min-height:0;padding:8px 10px}
-#graph{direction:ltr;overflow-x:auto}
-#graph svg{display:block}
+.timeline{flex:none;height:104px;background:var(--panel);border-radius:12px;overflow:auto hidden;direction:ltr;position:relative}
+.timeline svg{display:block}
+.timeline .none{color:var(--dim);padding:40px 12px 0;font-size:14px;text-align:center}
 .node{cursor:pointer}
-.detail{margin-top:6px;border-top:1px dashed var(--line);padding-top:6px;font-size:12.5px}
-.detail pre{margin:3px 0 0;font:11.5px/1.35 var(--mono);white-space:pre-wrap;background:#f3eee3;padding:5px 7px;border-radius:5px;direction:rtl;text-align:right}
-.gitrow{padding:4px 0;border-bottom:1px solid #eee7d9;font-size:12.5px}
-.gitrow:last-child{border-bottom:0}
-.gitrow .p{font:600 12px var(--mono);direction:ltr;text-align:left;color:var(--repo)}
-.gitrow .v{font:11.5px var(--mono);direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;color:#333}
-.gitrow .w{color:var(--dim);font-size:12px}
+.glowdot{animation:dot 1s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes dot{50%{transform:scale(1.5)}}
 
-.overlay{position:fixed;inset:0;background:#14171fb8;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
-.dialog{background:var(--card);border-radius:14px;padding:22px 26px;max-width:600px;width:100%;max-height:92vh;overflow:auto}
-.dialog.wide{max-width:820px}
-.dialog h2{margin:0 0 8px;font-size:25px;line-height:1.2}
-.dialog h3{margin:14px 0 4px;font-size:15px}
-.dialog ul{margin:6px 0;padding-inline-start:20px}
-.dialog li{margin-bottom:5px}
-.primary{background:var(--ok);color:#fff;border:0;border-radius:9px;padding:10px 24px;font-weight:700;font-size:16px;margin-top:10px}
-.primary:hover{background:#0e6532}
-.ghost{background:none;border:1px solid var(--line);border-radius:9px;padding:8px 16px;margin-top:10px;margin-inline-start:8px}
-.note{font-size:13px;color:var(--dim)}
-.editor textarea{width:100%;height:190px;font:14px/1.45 var(--mono);padding:8px;border:1px solid var(--line);border-radius:7px;unicode-bidi:plaintext;text-align:start}
-.sheet{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}
-.sheet table{border-collapse:collapse;width:100%;font-size:13px}
-.sheet td{padding:2px 0;vertical-align:top}
-.sheet td:first-child{direction:ltr;text-align:left;padding-inline-start:10px;white-space:nowrap;font:12.5px var(--mono);color:#6f3d00}
-.q{margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.q p{margin:0 0 5px;font-weight:600}
-.q button{display:block;width:100%;text-align:start;background:#fff;border:1px solid var(--line);border-radius:6px;padding:4px 9px;margin-bottom:4px;font-size:13.5px}
-.q button:hover:not(:disabled){border-color:var(--remote)}
-.q button.right{background:#e0f4e6;border-color:#6dc08a}
-.q button.wrong{background:#fde7e5;border-color:#e69a94}
-.q button:disabled{cursor:default;color:inherit}
-.q .why{font-size:13px;color:var(--dim);margin-top:3px}
+.strip{flex:none;height:30px;direction:ltr;background:#0b0b1e;border-radius:9px;padding:0 10px;display:flex;align-items:center;font:13px var(--mono);color:#ffe9a8;white-space:nowrap;overflow:hidden}
+.strip::before{content:"$";color:var(--green);margin-right:8px}
 
-.fly{position:fixed;z-index:15;padding:2px 9px;border-radius:6px;color:#fff;font:600 12px var(--mono);pointer-events:none;box-shadow:0 3px 10px #0005;transition:transform .55s cubic-bezier(.3,.7,.3,1),opacity .15s .45s}
-.toast{position:fixed;top:54px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:9px;z-index:30;animation:rise .25s;max-width:92vw}
+.hand{flex:none;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:62px;gap:8px;min-height:132px}
+.hand.free{grid-template-columns:1fr 1fr 1fr;grid-auto-rows:42px;min-height:142px}
+.card{background:#fff;color:#1d1c45;border-radius:14px;border-bottom:5px solid #c9c8e6;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15;padding:2px 4px;animation:pop .22s;transition:transform .06s}
+.card:active{transform:translateY(3px);border-bottom-width:2px}
+.card code{font:700 15px var(--mono);direction:ltr}
+.card span{font-size:13px;color:#5d5c8c}
+.card.big{grid-column:1/-1;grid-row:span 2;background:var(--gold);border-bottom-color:#c98f00;font-size:22px;font-weight:800}
+.card.hint{animation:hintp 1s infinite;background:#fff4c9}
+.card.bad{animation:shake .4s;background:#ffd2d2}
+.free .card code{font-size:12.5px}
+.free .card{border-radius:10px;border-bottom-width:3px}
+.wide2{grid-column:span 2}
+@keyframes hintp{50%{box-shadow:0 0 0 4px var(--gold)}}
+.options{display:contents}
+.opt{grid-column:1/-1}
+.hand.opts{grid-auto-rows:40px}
+.hand.opts .card{border-bottom-width:4px;font-size:17px;font-weight:700}
 
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-@media (max-width:980px){
-  .app{height:auto;min-height:0}
-  header{flex-wrap:wrap;gap:6px 10px;position:sticky;top:0;z-index:10}
-  .progress{order:3;flex-basis:100%}
-  header h1{flex:1;font-size:15px}
-  .main{display:flex;flex-direction:column}
-  .work{display:contents}
-  .mission,.zonewrap,.term,.panel{min-width:0;max-width:100%}
-  .mission{order:2;border:0;border-block:1px solid var(--line);padding:12px 14px}
-  .zonewrap{order:1;padding:8px}
-  .bottom{display:contents}
-  .term{order:3;margin:8px;height:290px}
-  .panel{order:4;margin:0 8px 16px;min-height:220px}
-  .scopes,.arrows{display:none}
-  .zones{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px}
-  .zone{height:124px;padding:4px 7px}
-  .zone .sub{display:none}
-  .sheet{grid-template-columns:1fr}
-  .tin input{font-size:16px}
-  .dialog{padding:16px}
+.fly{position:fixed;z-index:15;padding:3px 10px;border-radius:9px;background:var(--gold);color:#222;font:700 13px var(--mono);pointer-events:none;box-shadow:0 4px 14px #0007;transition:transform .6s cubic-bezier(.3,.7,.3,1),opacity .15s .5s}
+
+.overlay{position:fixed;inset:0;background:#0b0b1ecc;display:flex;align-items:center;justify-content:center;padding:14px;z-index:20}
+.overlay.sheetwrap{align-items:flex-end;padding:0}
+.dialog{background:var(--paper);color:#2b2540;border-radius:20px;padding:20px;width:100%;max-width:440px;max-height:90dvh;overflow:auto;text-align:center;animation:pop .25s}
+.dialog.sheet-up{border-radius:20px 20px 0 0;text-align:start}
+.dialog.left{text-align:start}
+.dialog h2{margin:0 0 6px;font-size:25px;line-height:1.2}
+.dialog p{margin:6px 0;font-size:16px}
+.big-e{font-size:60px;line-height:1.1}
+.primary{display:block;width:100%;background:var(--green);border-bottom:5px solid var(--green-d);color:#06331a;border-radius:14px;padding:12px;font-size:19px;font-weight:800;margin-top:12px}
+.primary:active{transform:translateY(3px);border-bottom-width:2px}
+.ghost{display:block;width:100%;background:#0000000f;border-radius:12px;padding:9px;margin-top:8px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+.chips code{background:#1d1c45;color:#ffe9a8;border-radius:8px;padding:3px 9px;font:600 13.5px var(--mono);direction:ltr}
+.row{padding:7px 0;border-bottom:1px solid #0000001a;text-align:start}
+.row .p{font:700 13px var(--mono);direction:ltr;text-align:left;color:#0c7a6d}
+.row .v{font:13px var(--mono);direction:ltr;text-align:left}
+.row .w{font-size:14px;color:#5d5580}
+.map{display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;align-items:center;gap:2px;margin:10px 0;font-size:11px}
+.map div{text-align:center}.map .i{font-size:25px;display:block}
+.map code{font:700 10px var(--mono);color:#7231d6;display:block}
+.stars{font-size:38px;letter-spacing:4px}
+.term{display:flex;flex-direction:column;height:70dvh;background:#14171f;color:#d9dde6;border-radius:20px 20px 0 0;width:100%;max-width:480px;direction:ltr;font:13px/1.45 var(--mono);overflow:hidden}
+.term .bar{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #2c313f;font:14px Arial,sans-serif}
+#tout{flex:1;overflow:auto;padding:10px 12px;min-height:0}
+#tout div{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.2em}
+.t-cmd{color:#fff}.t-prompt{color:#7fd6a4}.t-g{color:#5ee08f}.t-r{color:#ff7b72}.t-y{color:#f2cc60}.t-c{color:#7cc4ff}.t-d{color:#8b91a0}
+.t-tip{direction:rtl;text-align:right;color:#f5c86b;font-family:Arial,sans-serif}
+html[dir=ltr] .t-tip{direction:ltr;text-align:left}
+#tform{display:flex;gap:7px;align-items:center;padding:8px 12px;border-top:1px solid #2c313f}
+#tform label{color:#7fd6a4;white-space:nowrap}
+#tform input{flex:1;min-width:0;background:none;border:0;color:#fff;font:16px var(--mono);outline:none;direction:ltr}
+#tform button{background:#2a7a4e;border-radius:6px;padding:3px 12px}
+.toast{position:fixed;top:48px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:7px 14px;border-radius:9px;z-index:30;max-width:92vw;font-size:14px}
+.editor textarea{width:100%;height:170px;font:16px/1.4 var(--mono);padding:8px;border:1px solid #ccc;border-radius:8px;unicode-bidi:plaintext;text-align:start}
+.sheet{display:grid;grid-template-columns:1fr;gap:2px;text-align:start}
+.sheet h3{margin:12px 0 3px;font-size:16px}
+.sheet table{width:100%;border-collapse:collapse;font-size:14px}
+.sheet td{padding:3px 0;vertical-align:top}
+.sheet td:first-child{direction:ltr;text-align:left;font:12.5px var(--mono);color:#6f3d00;overflow-wrap:anywhere;width:52%;padding-inline-start:8px}
+.note{font-size:14px;text-align:start;color:#5d5580}
+.note li{margin-bottom:4px}
+.note code,.dialog p code{font:12.5px var(--mono);direction:ltr;unicode-bidi:isolate}
+@media (min-height:760px){.l{font-size:20px}}
+@media (max-height:690px){
+  .bubble{min-height:70px;padding:5px 10px}.goal{font-size:16px}.aha{font-size:13px}
+  .st .e{font-size:21px}.st .s{display:none}.place{display:none}
+  .timeline{height:88px}.hand{grid-auto-rows:50px;min-height:108px;gap:6px}.l{font-size:15px}
+  .strip{height:25px}.hand.opts{grid-auto-rows:32px}
 }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <h1>גיט ב-5 דקות</h1>
-    <div class="progress"><div class="bar"><i id="bar"></i></div><span class="where" id="where"></span></div>
-    <button class="hbtn" id="btnSheet">דף פקודות</button>
-    <button class="hbtn" id="btnReset">מההתחלה</button>
-  </header>
-  <div class="main">
-    <aside class="mission" id="mission" aria-live="polite"></aside>
-    <section class="work">
-      <div class="zonewrap">
-        <div class="scopes"><span>💻 על המחשב שלכם</span><span>☁️ באינטרנט</span></div>
-        <div class="zones">
-          <div class="zone" id="z-wd" style="--c:var(--wd)"></div>
-          <div class="arrows" dir="ltr"><div>add<b>←</b></div><div><b>→</b>restore</div></div>
-          <div class="zone" id="z-stage" style="--c:var(--stage)"></div>
-          <div class="arrows" dir="ltr"><div>commit<b>←</b></div></div>
-          <div class="zone" id="z-repo" style="--c:var(--repo)"></div>
-          <div class="arrows" dir="ltr"><div>push<b>←</b></div><div><b>→</b>pull</div></div>
-          <div class="zone" id="z-remote" style="--c:var(--remote)"></div>
-        </div>
-      </div>
-      <div class="bottom">
-        <div class="term">
-          <div class="tout" id="tout" role="log"></div>
-          <form class="tin" id="tform" autocomplete="off">
-            <label for="tinput" id="prompt"></label>
-            <input id="tinput" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="send" aria-label="טרמינל">
-            <button type="submit" aria-label="הרצה">▶</button>
-          </form>
-        </div>
-        <div class="panel">
-          <div class="tabs" role="tablist">
-            <button role="tab" id="tabGraph" aria-selected="true">היסטוריה (גרף)</button>
-            <button role="tab" id="tabGit" aria-selected="false">בתוך <span dir="ltr">.git</span></button>
-          </div>
-          <div class="pbody" id="pbody"></div>
-        </div>
-      </div>
-    </section>
+<div id="app">
+  <div class="top">
+    <div class="segs" id="segs"></div>
+    <button class="icon lang" id="btnLang"></button>
+    <button class="icon" id="btnTerm" aria-label="טרמינל">⌨️</button>
+    <button class="icon" id="btnSheet" aria-label="דף פקודות">📋</button>
+    <button class="icon" id="btnReset" aria-label="מההתחלה">↺</button>
+  </div>
+  <div class="bubble" aria-live="polite"><div class="aha" id="aha"></div><div class="goal" id="goal"></div></div>
+  <div class="place"><span>💻 על המחשב שלכם</span><span>☁️ בענן</span></div>
+  <div class="stations">
+    <div class="st" id="z-wd" style="--c:var(--wd)"></div>
+    <div class="st" id="z-stage" style="--c:var(--stage)"></div>
+    <button class="st" id="z-repo" style="--c:var(--repo)"></button>
+    <div class="st" id="z-remote" style="--c:var(--remote)"></div>
+  </div>
+  <div class="paper" id="paper"></div>
+  <div class="timeline" id="graph"></div>
+  <div class="strip" id="strip" aria-hidden="true"></div>
+  <div class="hand" id="hand"></div>
+</div>
+<div class="overlay sheetwrap" id="termWrap" style="display:none">
+  <div class="term">
+    <div class="bar"><b>הטרמינל: מה שרץ באמת</b><button id="termClose" aria-label="סגירה">✕</button></div>
+    <div id="tout" role="log"></div>
+    <form id="tform" autocomplete="off" style="display:none">
+      <label for="tinput" id="prompt"></label>
+      <input id="tinput" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="send">
+      <button type="submit" aria-label="הרצה">▶</button>
+    </form>
   </div>
 </div>
-
 <script>
 'use strict';
+/* ---------- language ---------- */
+let lang = 'he';
+const L = (he, en) => lang === 'en' ? en : he;
+const T = s => lang === 'en' && s ? (EN[s.replace(/‎/g, '')] ?? s) : s;
+const WORDS = { 'גרגירי חומוס': 'Chickpeas', 'קצת מלח': 'A little salt', 'הרבה מלח': 'Lots of salt', 'מלח': 'Salt', 'טחינה': 'Tahini', "צ'ילי": 'Chili', 'פפריקה': 'Paprika', 'כמון': 'Cumin', 'שום': 'Garlic', 'פטרוזיליה': 'Parsley', 'שמן זית': 'Olive oil', 'סודה לשתייה': 'Baking soda', 'קפה בכל מקום': 'coffee everywhere' };
+const W = he => lang === 'en' ? WORDS[he] : he;
+const EN = {
+  // terminal tips
+  'יש לכם שינויים שלא נשמרו, והמעבר היה דורס אותם. קודם commit (או git stash).': 'You have unsaved changes and this would overwrite them. Commit first (or git stash).',
+  'התיקייה עוד לא פרויקט גיט. קודם: git init': 'This folder is not a Git project yet. First: git init',
+  'פקודה לא מוכרת. הקלידו help לרשימה, או לחצו על הפקודה בצד.': 'Unknown command. Type help for the list.',
+  'בסימולטור לא מאפשרים להוסיף קובץ עם סימני קונפליקט. גיט אמיתי כן יאפשר ויישמר זבל, אז תמיד לבדוק לפני add.': 'This simulator refuses a file with conflict markers. Real Git would accept it and save the mess, so always check before add.',
+  'איזה קובץ? למשל git add hummus.txt, או git add . לכל מה שהשתנה.': 'Which file? For example git add hummus.txt, or git add . for everything that changed.',
+  'יש קונפליקט פתוח: קודם מתקנים את הקובץ, אחר כך git add, ורק אז commit.': 'There is an open conflict: fix the file, then git add, and only then commit.',
+  'חסרה הודעה. כך: git commit -m "מה עשיתי". (בלי -m גיט אמיתי פותח עורך טקסט.)': 'Missing a message. Like this: git commit -m "what I did". (Without -m, real Git opens a text editor.)',
+  'אזור ההכנה ריק: commit שומר רק את מה שעבר git add. קודם git add.': 'The staging area is empty: commit saves only what went through git add. Run git add first.',
+  'אין הבדלים. git diff משווה את הקובץ למה שכבר ב-staging; קבצים אחרי add רואים עם git diff --staged.': 'No differences. git diff compares the file with what is already staged; for files after add, use git diff --staged.',
+  'אי אפשר למחוק את הענף שעומדים עליו. קודם git switch לענף אחר.': 'You cannot delete the branch you are on. First git switch to another one.',
+  'אי אפשר ליצור ענף לפני ה-commit הראשון: ענף הוא תווית על commit.': 'You cannot create a branch before the first commit: a branch is a label on a commit.',
+  'יש מיזוג באמצע. מסיימים אותו, או מבטלים עם git merge --abort.': 'A merge is in progress. Finish it, or cancel with git merge --abort.',
+  'switch הוא לענפים. כדי לבקר ב-commit ישן: git checkout <hash>': 'switch is for branches. To visit an old commit: git checkout <hash>',
+  'יש שינויים לא שמורים. קודם commit (או git stash), אחר כך ממזגים.': 'You have unsaved changes. Commit first (or git stash), then merge.',
+  'עוד לא חיברתם שרת. קודם: git remote add origin <כתובת>': 'No server connected yet. First: git remote add origin <url>',
+  'אין מה לדחוף: עוד אין commit בענף הזה.': 'Nothing to push: this branch has no commits yet.',
+  'ב-GitHub יש commits שאין לכם. קודם git pull, אחר כך push.': 'GitHub has commits you do not have. git pull first, then push.',
+  'דחיפה בכוח דורסת commits של אחרים ב-GitHub. כמעט אף פעם לא רוצים את זה.': "A force push overwrites other people's commits on GitHub. You almost never want this.",
+  'reset --hard מוחק שינויים שלא נשמרו, בלי דרך חזרה. פקודה לזהירים.': 'reset --hard deletes unsaved changes with no way back. Handle with care.',
+  'ביטול של commit מיזוג הוא מקרה מיוחד. נסו revert על commit רגיל.': 'Reverting a merge commit is a special case. Try revert on a regular commit.',
+  'במחשב אמיתי clone מוריד את כל ה-.git מהשרת ופותח תיקייה חדשה עם הקבצים. בסימולטור יש רק תיקייה אחת, אז זו הדגמה בלבד.': 'On a real computer, clone downloads the whole .git from the server into a new folder with the files. This simulator has one folder, so this is only a demo.',
+  'במחשב אמיתי זה נשמר ב-~/.gitconfig. כך גיט יודע איזה שם לכתוב על כל commit.': 'On a real computer this is saved in ~/.gitconfig. That is how Git knows which name to put on each commit.',
+  'בסימולטור יש תיקייה אחת: hummus. במחשב אמיתי cd מחליף תיקייה.': 'This simulator has one folder: hummus. On a real computer, cd changes folder.',
+  'מחיקת .git היתה מוחקת את כל ההיסטוריה ומשאירה רק את הקבצים. לא נעשה את זה פה.': 'Deleting .git would erase the whole history and leave only the files. Not doing that here.',
+  'לא נוגעים ידנית בקבצים בתוך .git. גיט מנהל אותם לבד.': 'Do not edit files inside .git by hand. Git manages them.',
+  'לא עורכים ידנית קבצים בתוך .git.': 'Do not edit files inside .git by hand.',
+  'אולי התכוונתם ל-git?': 'Did you mean git?',
+  'פקודה לא מוכרת. הקלידו help לרשימה.': 'Unknown command. Type help for the list.',
+  'קודם דחפו את main ל-GitHub': 'Push main to GitHub first',
+  // board
+  'התיקייה': 'Folder', 'לא נשמר': 'unsaved', 'הקבצים': 'your files', 'הארגז': 'The box', 'אין עדיין': 'not yet', 'לא מחובר': 'not linked',
+  'בלי גיט': 'no Git', 'קונפליקט': 'conflict', 'לא במעקב': 'untracked', 'שונה, לא נשמר': 'changed, unsaved', 'בארגז': 'in the box', 'שמור': 'saved',
+  'ההיסטוריה נשרפה עם המחשב…': 'The history burned with the computer…', 'פה יופיעו השמירות שלכם': 'Your saves will appear here',
+  '💻 על המחשב שלכם': '💻 On your computer', '☁️ בענן': '☁️ In the cloud', 'הטרמינל: מה שרץ באמת': 'Terminal: what really ran',
+  // cards
+  'להפעיל גיט': 'turn Git on', 'מה המצב?': "what's going on?", 'לשים בארגז': 'put in the box', 'לסגור ולשמור': 'seal and save', 'לשלוח לענן': 'send to the cloud',
+  'להביא מהענן': 'get from the cloud', 'מה השתנה?': 'what changed?', 'כל השמירות': 'all saves', 'לבטל שינוי': 'undo a change', 'ענף חדש': 'new branch',
+  'חזרה ל-main': 'back to main', 'לאחד ענפים': 'join branches', 'להוריד הכול': 'download it all', 'לחבר לשרת': 'link a server',
+  // shared wrong answers
+  'עוד לא. אין פה גיט בכלל.': 'Not yet. There is no Git here at all.', 'הארגז ריק! commit שומר רק מה שבארגז.': 'The box is empty! commit saves only what is in the box.',
+  // level names
+  'שמירה ראשונה': 'First save', 'מכונת זמן': 'Time machine', 'עולמות מקבילים': 'Parallel worlds', 'הענן': 'The cloud', 'מלחמת המלח': 'The salt war', 'המבחן': 'The final test',
+  // level 1
+  'גיט לא מכיר את התיקייה. הפעילו אותו.': "Git doesn't know this folder. Turn it on.", 'אין מה לשלוח, ואין לאן.': 'Nothing to send, and nowhere to send it.',
+  'נולדה תיקייה נסתרת: .git. שם נשמר הכול.': 'A hidden folder was born: .git. Everything is saved there.', 'מה המצב עכשיו?': "What's going on now?", 'כבר הפעלתם.': 'You already turned it on.',
+  'גיט רואה את הקובץ, אבל עוד לא שומר אותו.': 'Git sees the file, but is not saving it yet.', 'שימו את המתכון בארגז': 'Put the recipe in the box', 'בארגז בוחרים מה ייכנס לשמירה.': 'The box is where you choose what goes into the save.',
+  'סגרו את הארגז ושמרו': 'Seal the box and save', 'הוא כבר בארגז.': "It's already in the box.", 'עוד לא נשמר כלום. אין מה לשלוח.': 'Nothing is saved yet. Nothing to send.',
+  '📸 נשמר! כל נקודה היא תמונה של הפרויקט. בלי אינטרנט.': '📸 Saved! Each dot is a snapshot of the project. No internet needed.', 'איפה זה נשמר? לחצו על 🗄️': 'Where is it saved? Tap 🗄️', 'הכול בקבצים קטנים, על המחשב שלכם.': 'It is all small files, on your computer.',
+  // level 2
+  'הוסיפו טחינה למתכון': 'Add tahini to the recipe', '🥣 מוסיפים טחינה': '🥣 Add tahini', 'הקובץ השתנה, וגיט שם לב.': 'The file changed, and Git noticed.', 'מה בדיוק השתנה?': 'What exactly changed?', 'ירוק = נוסף. אדום = נמחק.': 'Green = added. Red = removed.',
+  'שמרו. שלב ראשון:': 'Save it. Step one:', 'שלב שני:': 'Step two:', 'זו כל העבודה היומית: add, ואז commit.': 'That is the daily routine: add, then commit.', 'הציגו את כל השמירות': 'Show all the saves', 'מהחדשה לישנה. לכל שמירה הודעה ומזהה.': 'Newest first. Each save has a message and an ID.',
+  'קפצו לעבר: לחצו על הנקודה הראשונה 👇': 'Jump to the past: tap the first dot 👇', '🤯 הטחינה נעלמה! הקובץ חזר לאותו רגע.': '🤯 The tahini is gone! The file went back to that moment.', 'חזרו להווה': 'Back to the present', 'היא חזרה. בגיט שום שמירה לא נעלמת.': 'It came back. In Git, a save does not vanish.',
+  '☕ נשפך קפה על הקובץ! הצילו אותו.': '☕ Coffee spilled on the file! Rescue it.', 'אל תשמרו קפה! הוא ייכנס להיסטוריה.': "Don't save the coffee! It would enter the history.", 'ככה הקפה נכנס לארגז. לא זה.': 'That puts the coffee in the box. Not that.', 'אתם רוצים לשלוח קפה לכולם?': 'You want to send coffee to everyone?', '😮‍💨 ניצל! אבל רק מה ששמרתם אפשר להחזיר.': '😮‍💨 Rescued! But only what you saved can come back.',
+  // level 3
+  "רוצים לנסות צ'ילי בלי לסכן את המתכון": 'Try chili without risking the recipe', 'אין מה לשמור, ועוד תלכלכו את המתכון הטוב.': 'Nothing to save, and you would dirty the good recipe.', 'אין עדיין מה לאחד.': 'Nothing to join yet.', 'ענף = עולם מקביל. המקור מוגן.': 'A branch = a parallel world. The original is safe.',
+  "הוסיפו צ'ילי": 'Add chili', "🌶️ מוסיפים צ'ילי": '🌶️ Add chili', 'רק הענף spicy התקדם.': 'Only the spicy branch moved forward.', 'חזרו ל-main ותסתכלו על המתכון': 'Go back to main and watch the recipe', 'עומדים עדיין על spicy. קודם חוזרים ל-main.': 'You are still on spicy. Go back to main first.',
+  "🤯 הצ'ילי נעלם! הוא מחכה בענף שלו.": '🤯 The chili is gone! It is waiting on its branch.', 'היה טעים. הכניסו אותו למתכון הראשי!': 'Tasty! Bring it into the main recipe.', "עכשיו הצ'ילי גם ב-main.": 'Now the chili is on main too.',
+  // level 4
+  'עד עכשיו הכול רק אצלכם. חברו את GitHub.': 'So far it is all only on your computer. Link GitHub.', 'לאן? עוד לא חיברתם שרת.': 'Where to? No server linked yet.', 'מאיפה? עוד לא חיברתם שרת.': 'From where? No server linked yet.', 'גיט הוא הכלי. GitHub הוא רק עוד עותק.': 'Git is the tool. GitHub just holds another copy.',
+  'שלחו את השמירות לענן': 'Send the saves to the cloud', 'יש לכם גיבוי מלא.': 'You now have a full backup.', '🔥 המחשב נשרף! החזירו את הכול.': '🔥 Your computer burned down! Get it all back.', 'המחשב נשרף. אין ממנו מה לשלוח.': 'The computer burned. There is nothing to send from it.', 'pull עובד רק בתוך פרויקט קיים. אין פה כלום.': 'pull works only inside an existing project. There is nothing here.', 'זה פרויקט ריק. ההיסטוריה שלכם בענן.': 'That makes an empty project. Your history is in the cloud.', '🎉 כל ההיסטוריה חזרה מהענן!': '🎉 The whole history came back from the cloud!',
+  'חבר הוסיף פפריקה ודחף לענן. הביאו אותה.': 'A friend added paprika and pushed it. Get it.', 'נדחה! בענן יש משהו שאין לכם. קודם מביאים.': 'Rejected! The cloud has something you do not. Get it first.', 'כבר יש לכם את הפרויקט. צריך רק את החדש.': 'You already have the project. You only need what is new.', 'הנקודה הכחולה היא של החבר.': "The blue dot is your friend's.",
+  // level 5
+  'החבר דחף "הרבה מלח". אתם רוצים קצת.': 'Your friend pushed "Lots of salt". You want a little.', '🧂 משנים ל"קצת מלח"': '🧂 Change to "A little salt"', 'שמרו את השינוי': 'Save the change', 'קודם שומרים, ורק אז מביאים.': 'Save first, then get theirs.', 'עוד לא שמרתם.': 'You have not saved yet.', 'זה ימחק את השינוי שלכם.': 'That would delete your change.', 'עכשיו גם אתם וגם החבר שיניתם אותה שורה.': 'Now you and your friend both changed the same line.',
+  'הביאו את השינוי של החבר': "Get your friend's change", 'נדחה! בענן יש שמירה שאין לכם.': 'Rejected! The cloud has a save you do not.', '💥 קונפליקט! לא תקלה: גיט שואל מי צודק.': '💥 Conflict! Not a bug: Git is asking who is right.', 'אתם מחליטים: מה נשאר במתכון?': 'You decide: what stays in the recipe?', 'קצת מלח': 'A little salt', 'הרבה מלח': 'Lots of salt', 'גם וגם': 'Both', 'קונפליקט הוא רק טקסט בקובץ.': 'A conflict is just text in a file.',
+  'קודם מסמנים שפתרתם: add.': 'First mark it as solved: add.', 'שני קווים התאחדו לנקודה אחת 👆': 'Two lines joined into one dot 👆', 'שלחו לחבר': 'Send it to your friend', 'זהו. ככה עובדים בצוות.': 'That is how teams work.',
+  // final test
+  'שיניתם קובץ. שלב 1 מ-3 בדרך ל-GitHub:': 'You changed a file. Step 1 of 3 on the way to GitHub:', 'שלב 2 מ-3:': 'Step 2 of 3:', 'שלב 3 מ-3:': 'Step 3 of 3:', '✓ add, commit, push: זה 90% מהיום.': '✓ add, commit, push: that is most of your day.',
+  'קלקלתם קובץ ועוד לא שמרתם': 'You broke a file and have not saved', '✓ חזר לגרסה השמורה.': '✓ Back to the saved version.', 'יש לכם רעיון מסוכן לנסות': 'You have a risky idea to try', '✓ ענף חדש, והמקור מוגן.': '✓ New branch, original safe.', 'חבר דחף שינוי. איך מקבלים אותו?': 'A friend pushed a change. How do you get it?', 'מחשב חדש. איך מורידים את הפרויקט?': 'New computer. How do you download the project?', 'התבלבלתם. מה מריצים קודם?': 'You are lost. What do you run first?', '✓ תמיד status.': '✓ Always status.',
+  // sheets and dialogs
+  'בתוך התיקייה הנסתרת': 'Inside the hidden folder', 'איפה אתם עכשיו': 'Where you are now', 'ענף הוא קובץ קטן עם מזהה של שמירה': 'A branch is a small file holding a save ID', 'כל השמירות וכל הגרסאות של הקבצים': 'All the saves and every version of the files', 'הבנתי': 'Got it',
+  'מתלמד גיט': 'Git apprentice', 'שף של גיט': 'Git chef', 'מאסטר גיט': 'Git master', 'כל מה שצריך, בתמונה אחת:': 'All you need, in one picture:', 'משחק חופשי': 'Free play', '📋 דף פקודות': '📋 Cheat sheet', 'לשחק שוב': 'Play again',
+  'משחק חופשי: נסו מה שבא לכם': 'Free play: try anything', 'משחק חופשי: ⌨️ מציג פלט מלא': 'Free play: ⌨️ shows the full output', '🥣 מרכיב': '🥣 Ingredient', '🤝 חבר דוחף': '🤝 Friend pushes',
+  'שמירת הקובץ': 'Save the file', 'ביטול': 'Cancel', 'זו לא הראשונה. הראשונה היא השמאלית.': 'Not that one. The first is on the far left.', 'להתחיל מחדש?': 'Start over?',
+  'הצילו את החומוס': 'Save the hummus', 'גיט הוא Save Game לקבצים. לוחצים על קלפים, רואים מה קורה, ובסוף יודעים גיט.': 'Git is a Save Game for your files. Tap cards, watch what happens, and by the end you know Git.', 'יאללה': "Let's go",
+  'דף פקודות': 'Cheat sheet', 'סגירה': 'Close', 'הדפסה': 'Print',
+  'מתחילים': 'Getting started', 'פרויקט חדש בתיקייה הזו': 'New project in this folder', 'הורדת פרויקט קיים': 'Download an existing project', 'השם שלכם (פעם אחת)': 'Your name (once)', 'המייל שלכם (פעם אחת)': 'Your email (once)',
+  'כל יום': 'Every day', 'מה המצב': "What's going on", 'לאזור ההכנה': 'Move to staging', 'כל מה שהשתנה': 'Everything that changed', 'שמירה': 'Save', 'היסטוריה': 'History', 'מה השתנה ועוד לא ב-add': 'Changed, not yet added', 'מה ב-add ועוד לא נשמר': 'Added, not yet saved',
+  'ענפים': 'Branches', 'רשימת ענפים': 'List branches', 'ענף חדש, ועוברים אליו': 'New branch, and switch to it', 'מעבר לענף': 'Switch branch', 'מיזוג לענף הנוכחי': 'Merge into the current branch', 'מחיקת ענף שמוזג': 'Delete a merged branch',
+  'עם אחרים': 'With others', 'חיבור לשרת': 'Link a server', 'דחיפה ראשונה': 'First push', 'שליחת commits': 'Send commits', 'הורדה ומיזוג': 'Download and merge', 'הורדה בלי מיזוג': 'Download without merging',
+  'ביטולים': 'Undo', 'ביטול שינוי שלא נשמר (נמחק!)': 'Undo an unsaved change (it is deleted!)', 'הוצאה מאזור ההכנה': 'Take out of staging', 'commit חדש שמבטל ישן (בטוח)': 'New commit that undoes an old one (safe)', 'החבאת שינויים לרגע, והחזרה': 'Hide changes for a moment, and bring them back', 'מחיקת עבודה וחזרה אחורה (מסוכן!)': 'Delete work and go back (dangerous!)',
+  'איפה הכול נמצא': 'Where everything lives', 'קבצים': 'Files', 'תיקיית העבודה': 'Working folder', 'איפה אני': 'Where I am', 'כתובת השרת': 'Server address',
+};
 /* ---------- small DOM helpers ---------- */
 const $ = id => document.getElementById(id);
 function el(tag, props = {}, ...kids) {
@@ -382,7 +447,7 @@ function visibleCommits() {
 /* ---------- terminal output ---------- */
 function out(text = '', cls) { const d = el('div', cls ? { class: 't-' + cls } : {}); d.textContent = text; $('tout').append(d); }
 function err(text) { failed = true; out(text, 'r'); }
-function tip(text) { const d = el('div', { class: 't-tip' }); d.textContent = '💡 ' + text; $('tout').append(d); }
+function tip(text) { const d = el('div', { class: 't-tip' }); d.textContent = '💡 ' + T(text); $('tout').append(d); }
 function fly(from, to, text) { anims.push({ from, to, text }); }
 
 /* ---------- git commands ---------- */
@@ -400,7 +465,7 @@ function git(a) {
     restore: gRestore, branch: gBranch, switch: gSwitch, checkout: gCheckout, merge: gMerge,
     remote: gRemote, push: gPush, pull: gPull, fetch: gFetch, reset: gReset, revert: gRevert,
     stash: gStash, rm: gRm, clone: gClone, config: gConfig,
-    version: () => out('git version (סימולטור)'), '--version': () => out('git version (סימולטור)'),
+    version: () => out('git version (simulator)'), '--version': () => out('git version (simulator)'),
   }[sub];
   if (!fn) {
     err(`git: '${sub}' is not a git command. See 'git --help'.`);
@@ -619,7 +684,7 @@ function gBranch(a) {
     if (S.head.branch === n) { err(`error: Cannot delete branch '${n}' checked out at '/home/you/hummus'`); tip('אי אפשר למחוק את הענף שעומדים עליו. קודם git switch לענף אחר.'); return; }
     if (flags.includes('-d') && !isAncestor(S.branches[n], headId())) {
       err(`error: The branch '${n}' is not fully merged.`);
-      tip(`יש בו commits שעוד לא מוזגו. מחיקה בכוח עם git branch -D ${n} תאבד אותם.`);
+      tip(L(`יש בו commits שעוד לא מוזגו. מחיקה בכוח עם git branch -D ${n} תאבד אותם.`, `It has commits that were not merged. Force deleting with git branch -D ${n} loses them.`));
       return;
     }
     out(`Deleted branch ${n} (was ${S.branches[n]}).`);
@@ -653,7 +718,7 @@ function switchTo(n) {
       out(`Switched to a new branch '${n}'`); return;
     }
     err(`fatal: invalid reference: ${n}`);
-    tip(`אין ענף בשם ${n}. לראות את הענפים: git branch. ליצור חדש: git switch -c ${n}`);
+    tip(L(`אין ענף בשם ${n}. לראות את הענפים: git branch. ליצור חדש: git switch -c ${n}`, `No branch named ${n}. See branches: git branch. Create one: git switch -c ${n}`));
     return;
   }
   if (S.head.branch === n) { out(`Already on '${n}'`); ran.add('switch'); return; }
@@ -785,7 +850,7 @@ function gPush(a) {
   if (!pos.length && !setUp && !S.tracking[b]) {
     err(`fatal: The current branch ${b} has no upstream branch.`);
     out(`To push the current branch and set the remote as upstream, use\n\n    git push --set-upstream origin ${b}\n`);
-    tip(`בפעם הראשונה צריך לומר לאן: git push -u origin ${b}`);
+    tip(L(`בפעם הראשונה צריך לומר לאן: git push -u origin ${b}`, `The first time, say where: git push -u origin ${b}`));
     return;
   }
   const rem = S.remote.branches[b], loc = S.branches[b];
@@ -821,7 +886,7 @@ function gPull(a) {
   const up = pos[1] ? 'origin/' + pos[1] : S.head.branch && S.tracking[S.head.branch];
   if (!up) {
     err('There is no tracking information for the current branch.');
-    tip(`גיט לא יודע מאיפה למשוך. git pull origin ${b || 'main'}, או push -u פעם אחת.`);
+    tip(L(`גיט לא יודע מאיפה למשוך. git pull origin ${b || 'main'}, או push -u פעם אחת.`, `Git does not know where to pull from. Use git pull origin ${b || 'main'}, or push -u once.`));
     return;
   }
   fetchRemote();
@@ -1045,462 +1110,448 @@ const INGREDIENTS = ['פפריקה', 'כמון', 'שום', 'פטרוזיליה',
 let extraI = 0;
 function freePlayFriend() {
   if (!S.remote || !S.remote.branches.main) { toast('קודם דחפו את main ל-GitHub'); return; }
-  const item = INGREDIENTS[extraI++ % INGREDIENTS.length];
+  const item = W(INGREDIENTS[extraI++ % INGREDIENTS.length]);
   friendPush(t => { t[FILE] = fileNorm(t[FILE] || '') + item + '\n'; }, 'add ' + item);
-  toast(`חבר דחף ל-GitHub: הוסיף ${item}. הריצו git pull`);
+  toast(L(`חבר דחף ל-GitHub: הוסיף ${item}. הריצו git pull`, `A friend pushed to GitHub: added ${item}. Run git pull`));
   anims = []; afterChange();
 }
 
-/* ---------- rendering ---------- */
-function fileCard(p, badgeCls, badge, withBody, clickable) {
-  const body = withBody ? (() => { const b = el('pre', { class: 'fbody', dir: 'auto' }); b.textContent = (S.files[p] || '').replace(/\n$/, ''); return b; })() : null;
-  const name = el('div', { class: 'fname' }, el('span', {}), badge ? el('span', { class: 'badge b-' + badgeCls }) : null);
-  name.children[0].textContent = p;
-  if (badge) name.children[1].textContent = badge;
-  return clickable
-    ? el('button', { class: 'file', title: 'לחצו לעריכה', onclick: () => openEditor(p) }, name, body)
-    : el('div', { class: 'file' }, name, body);
-}
-function zoneHead(id, title, sub) {
+/* ---------- the board ---------- */
+let diffOn = false, logOn = false, burned = false, prevLines = new Set(), glowDot = null;
+function stationHtml(id, e, n, s, pip) {
   const z = $(id); z.textContent = '';
-  z.append(el('h3', { html: title }), el('div', { class: 'sub', html: sub }));
-  return z;
+  const a = el('span', { class: 'e' }, e), b = el('span', { class: 'n' }), c = el('span', { class: 's' });
+  b.textContent = T(n); c.textContent = T(s);
+  z.append(a, b, c);
+  if (pip) z.append(el('span', { class: 'pip' }, pip));
 }
-function renderZones() {
+function renderStations() {
   const st = status();
-  const wd = zoneHead('z-wd', 'תיקיית העבודה', 'הקבצים שרואים ועורכים. לחצו על קובץ לעריכה.');
-  const names = Object.keys(S.files).sort();
-  if (!names.length) wd.append(el('div', { class: 'empty', html: 'התיקייה ריקה' }));
-  for (const p of names) {
-    let cls = 'ok', b = S.init ? 'שמור' : '';
-    if (ignored(p)) { cls = 'I'; b = 'ignored'; }
-    else if (st.conflicts.includes(p)) { cls = 'C'; b = 'קונפליקט'; }
-    else if (st.untracked.includes(p)) { cls = 'U'; b = S.init ? 'חדש' : ''; }
-    else if (st.unstaged.some(d => d.p === p)) { cls = 'M'; b = 'שונה'; }
-    else if (st.staged.some(d => d.p === p)) { cls = 'A'; b = 'ב-staging'; }
-    wd.append(fileCard(p, cls, b, true, true));
-  }
-  const stage = zoneHead('z-stage', 'אזור ההכנה <small dir="ltr">(staging)</small>', 'מה ייכנס ל-commit הבא.');
-  if (!st.staged.length) stage.append(el('div', { class: 'empty', html: 'ריק' }));
-  for (const d of st.staged) stage.append(fileCard(d.p, d.kind === 'deleted' ? 'D' : 'A', d.kind === 'deleted' ? 'נמחק' : d.kind === 'new file' ? 'חדש' : 'שונה'));
-
-  const repo = zoneHead('z-repo', 'המאגר המקומי <small dir="ltr">(.git)</small>', 'כל השמירות. יושב בתיקייה נסתרת.');
-  if (!S.init) repo.append(el('div', { class: 'empty', html: 'עוד לא קיים' }));
-  else {
-    const id = headId(), count = id ? ancestors(id).size : 0;
-    const info = el('div', { class: 'repoinfo' });
-    info.append(`${count} commits בענף `, el('b', { dir: 'ltr' }, headLabel()));
-    if (id) {
-      const last = el('div'); last.append(el('span', { class: 'hash' }, id), ' ');
-      const m = el('span', { dir: 'auto' }); m.textContent = S.commits[id].msg; last.append(m);
-      info.append(last);
-    }
-    if (S.merging) info.append(el('div', { style: 'color:#b3261e;font-weight:700', html: 'מיזוג באמצע' }));
-    repo.append(info);
-  }
-  const rem = zoneHead('z-remote', 'השרת <small dir="ltr">(GitHub)</small>', 'עוד עותק של \u200E.git\u200E, לגיבוי ולעבודה עם אחרים.');
-  if (!S.remote) rem.append(el('div', { class: 'empty', html: 'לא מחובר' }));
-  else {
-    const info = el('div', { class: 'repoinfo' });
-    const u = el('div', { dir: 'ltr', style: 'font:11px var(--mono);overflow-wrap:anywhere;text-align:left' }); u.textContent = S.remote.url; info.append(u);
-    const mainId = S.remote.branches.main;
-    if (mainId) {
-      const n = ancestors(mainId).size;
-      info.append(`${n} commits ב-`, el('b', { dir: 'ltr' }, 'main'));
-      const l = el('div'); l.append(el('span', { class: 'hash', style: 'color:var(--remote)' }, mainId));
-      info.append(l);
-      const localMain = S.branches.main;
-      if (localMain && !isAncestor(mainId, localMain)) info.append(el('div', { style: 'color:#b3261e;font-size:12px', html: 'יש פה משהו שאין אצלכם' }));
-      else if (localMain && mainId !== localMain) info.append(el('div', { style: 'color:#b86e00;font-size:12px', html: 'אצלכם יש commits שעוד לא נדחפו' }));
-    } else info.append(el('div', { class: 'empty', html: 'עוד לא נדחף כלום' }));
-    if (stepI >= STEPS.length) info.append(el('button', { class: 'friend', onclick: freePlayFriend }, 'חבר דוחף שינוי'));
-    rem.append(info);
-  }
+  const dirty = st.unstaged.length + st.untracked.length + st.conflicts.length;
+  stationHtml('z-wd', burned ? '🔥' : '📝', 'התיקייה', dirty ? 'לא נשמר' : 'הקבצים', dirty && !burned ? '✏️' : '');
+  stationHtml('z-stage', burned ? '🔥' : '📦', 'הארגז', 'staging', st.staged.length && !burned ? '📄' : '');
+  const n = headId() ? ancestors(headId()).size : 0;
+  stationHtml('z-repo', burned ? '🔥' : '🗄️', '\u200E.git\u200E', !S.init ? 'אין עדיין' : L(n + ' שמירות', n + ' saves'));
+  const rn = S.remote && S.remote.branches.main ? ancestors(S.remote.branches.main).size : 0;
+  stationHtml('z-remote', '☁️', 'GitHub', !S.remote ? 'לא מחובר' : L(rn + ' שמירות', rn + ' saves'));
+  $('z-repo').classList.toggle('off', !S.init);
+  $('z-stage').classList.toggle('off', !S.init);
+  $('z-remote').classList.toggle('off', !S.remote);
 }
-let tab = 'graph';
-function renderPanel() {
-  $('tabGraph').setAttribute('aria-selected', tab === 'graph');
-  $('tabGit').setAttribute('aria-selected', tab === 'git');
-  const b = $('pbody'); b.textContent = '';
-  if (tab === 'graph') renderGraph(b); else renderInternals(b);
+function renderPaper() {
+  const pap = $('paper'); pap.textContent = '';
+  if (burned) { pap.append(el('div', { class: 'burnt' }, '🔥')); return; }
+  if (logOn && headId()) {
+    pap.append(el('div', { class: 'phead' }, el('span', {}, 'git log')));
+    [...ancestors(headId())].map(c => S.commits[c]).sort((a, b) => b.n - a.n).forEach(c => {
+      const r = el('div', { class: 'l log' }), m = el('span'); m.textContent = c.msg;
+      r.append(el('b', {}, c.id), m); pap.append(r);
+    });
+    return;
+  }
+  const st = status(), text = S.files[FILE] || '';
+  let pill = null;
+  if (!S.init) pill = ['#888', 'בלי גיט'];
+  else if (st.conflicts.includes(FILE)) pill = ['#d13438', 'קונפליקט'];
+  else if (st.untracked.includes(FILE)) pill = ['#d13438', 'לא במעקב'];
+  else if (st.unstaged.some(d => d.p === FILE)) pill = ['#c77700', 'שונה, לא נשמר'];
+  else if (st.staged.some(d => d.p === FILE)) pill = ['#7231d6', 'בארגז'];
+  else pill = ['#0c7a6d', 'שמור'];
+  const head = el('div', { class: 'phead' }, el('span', {}, FILE));
+  const pl = el('span', { class: 'pill', style: 'background:' + pill[0] }); pl.textContent = T(pill[1]); head.append(pl);
+  pap.append(head);
+  const add = (t, cls) => { const d = el('div', { class: 'l' + (cls ? ' ' + cls : '') }); d.textContent = t; pap.append(d); };
+  if (diffOn) {
+    for (const [t, l] of lineDiff(lines(S.index[FILE]), lines(text))) add((t === ' ' ? '' : t + ' ') + l, t === '+' ? 'add' : t === '-' ? 'del' : '');
+    return;
+  }
+  let zone = null;
+  const now = new Set();
+  for (const l of lines(text)) {
+    now.add(l);
+    if (l.startsWith('<<<<<<<')) { add(l, 'mark'); zone = 'ours'; }
+    else if (l.startsWith('=======')) { add(l, 'mark'); zone = 'theirs'; }
+    else if (l.startsWith('>>>>>>>')) { add(l, 'mark'); zone = null; }
+    else add(l, [zone, prevLines.size && !prevLines.has(l) ? 'new' : ''].filter(Boolean).join(' '));
+  }
+  prevLines = now;
 }
-function renderGraph(root) {
-  const list = visibleCommits();
-  if (!list.length) { root.append(el('div', { class: 'empty', html: 'עוד אין commits. כל שמירה תופיע פה כנקודה, עם קו אל השמירה שלפניה.' })); return; }
-  const lane = {}; let L = 0;
-  const tips = [S.branches.main, ...Object.entries(S.branches).filter(([n]) => n !== 'main').map(e => e[1]), S.head.detached, ...Object.values(S.remoteRefs)].filter(Boolean);
-  for (const tip of tips) {
-    let c = tip, added = 0;
-    while (c && lane[c] === undefined) { lane[c] = L; added++; c = S.commits[c].parents[0]; }
-    if (added) L++;
-  }
-  for (const c of [...list].reverse()) {
-    let x = c.id, added = 0;
-    while (x && lane[x] === undefined) { lane[x] = L; added++; x = S.commits[x].parents[0]; }
-    if (added) L++;
-  }
+function renderTimeline() {
+  const root = $('graph'); root.textContent = '';
+  const list = burned ? [] : visibleCommits();
+  if (!list.length) { root.append(el('div', { class: 'none' }, T(burned ? 'ההיסטוריה נשרפה עם המחשב…' : 'פה יופיעו השמירות שלכם'))); return; }
+  const lane = {}; let laneN = 0;
+  const chain = tip => { let c = tip, added = 0; while (c && lane[c] === undefined) { lane[c] = laneN; added++; c = S.commits[c].parents[0]; } if (added) laneN++; };
+  [S.branches.main, ...Object.entries(S.branches).filter(([n]) => n !== 'main').map(e => e[1]), S.head.detached, ...Object.values(S.remoteRefs)].filter(Boolean).forEach(chain);
+  [...list].reverse().forEach(c => chain(c.id));
   const labels = {};
   const put = (id, text, kind) => (labels[id] = labels[id] || []).push({ text, kind });
   if (S.head.detached) put(S.head.detached, 'HEAD', 'head');
   for (const [n, id] of Object.entries(S.branches)) put(id, S.head.branch === n ? `HEAD → ${n}` : n, S.head.branch === n ? 'head' : 'branch');
   for (const [n, id] of Object.entries(S.remoteRefs)) put(id, n, 'remote');
-  const maxL = Math.max(1, ...Object.values(labels).map(a => a.length));
-  const top = 14 + maxL * 19, X = i => 34 + i * 78, Y = l => top + l * 44;
-  const W = X(list.length - 1) + 74, H = Y(Math.max(0, L - 1)) + 40;
+  const short = root.clientHeight < 100;
+  const X = i => 48 + i * 74, top = 44, laneH = short ? 26 : 30, Y = l => top + l * laneH;
+  const W = Math.max(root.clientWidth, X(list.length - 1) + 60), H = Math.max(root.clientHeight, Y(Math.max(0, laneN - 1)) + 14);
   const pos = {}; list.forEach((c, i) => pos[c.id] = [X(i), Y(lane[c.id] || 0)]);
   const NS = 'http://www.w3.org/2000/svg';
   const sv = (t, attrs, text) => { const e = document.createElementNS(NS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; };
-  const svg = sv('svg', { width: W, height: H, role: 'img', 'aria-label': 'גרף commits' });
+  const svg = sv('svg', { width: W, height: H, role: 'img', 'aria-label': L('ההיסטוריה', 'History') });
   for (const c of list) for (const p of c.parents) {
     if (!pos[p]) continue;
     const [x1, y1] = pos[p], [x2, y2] = pos[c.id], mx = (x1 + x2) / 2;
-    svg.append(sv('path', { d: y1 === y2 ? `M${x1} ${y1}L${x2} ${y2}` : `M${x1} ${y1}C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`, fill: 'none', stroke: '#9a958a', 'stroke-width': 2.5 }));
+    svg.append(sv('path', { d: y1 === y2 ? `M${x1} ${y1}L${x2} ${y2}` : `M${x1} ${y1}C${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`, fill: 'none', stroke: '#8d8cc4', 'stroke-width': 3 }));
   }
-  const kinds = { head: '#20242e', branch: '#0c7a6d', remote: '#1b55d0' };
+  const kinds = { head: '#ffc83d', branch: '#2ed8b6', remote: '#54a0ff' };
   for (const c of list) {
     const [x, y] = pos[c.id], isHead = c.id === headId();
-    const g = sv('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': `commit ${c.id}: ${c.msg}` });
-    const pick = () => { selected = selected === c.id ? null : c.id; renderPanel(); };
-    g.addEventListener('click', pick);
-    g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
-    g.append(sv('circle', { cx: x, cy: y, r: isHead ? 10 : 8, fill: c.author === 'Friend' ? '#1b55d0' : '#0c7a6d', stroke: selected === c.id ? '#f5b53f' : '#fff', 'stroke-width': 3 }));
-    g.append(sv('text', { x, y: y + 22, 'text-anchor': 'middle', 'font-size': 11, 'font-family': 'monospace', fill: '#555' }, c.id));
+    const g = sv('g', { class: 'node', tabindex: 0, role: 'button', 'aria-label': `${L('שמירה', 'Save')} ${c.id}: ${c.msg}` });
+    g.addEventListener('click', () => tapDot(c.id));
+    g.append(sv('circle', { cx: x, cy: y, r: 20, fill: 'transparent' }));
+    g.append(sv('circle', { cx: x, cy: y, r: isHead ? 10 : 8, class: glowDot === c.id ? 'glowdot' : '', fill: c.author === 'Friend' ? '#54a0ff' : '#2ed8b6', stroke: glowDot === c.id ? '#ffc83d' : '#fff', 'stroke-width': 3 }));
     svg.append(g);
-    (labels[c.id] || []).forEach((lb, i) => {
-      const w = lb.text.length * 7 + 12, ly = y - 20 - i * 19 - 13;
+    (labels[c.id] || []).slice(0, 2).forEach((lb, i) => {
+      const w = lb.text.length * 6.8 + 10, ly = y - 13 - 15 - i * 15;
       const lx = Math.max(2, Math.min(x - w / 2, W - w - 2));
-      svg.append(sv('rect', { x: lx, y: ly, width: w, height: 16, rx: 4, fill: kinds[lb.kind] }));
-      svg.append(sv('text', { x: lx + w / 2, y: ly + 12, 'text-anchor': 'middle', 'font-size': 11, 'font-family': 'monospace', fill: '#fff' }, lb.text));
+      svg.append(sv('rect', { x: lx, y: ly, width: w, height: 14, rx: 4, fill: kinds[lb.kind] }));
+      svg.append(sv('text', { x: lx + w / 2, y: ly + 11, 'text-anchor': 'middle', 'font-size': 10.5, 'font-weight': 700, 'font-family': 'monospace', fill: '#14143a' }, lb.text));
     });
   }
-  const g = el('div', { id: 'graph' }); g.append(svg); root.append(g);
-  g.scrollLeft = g.scrollWidth;
-  if (selected && S.commits[selected]) {
-    const c = S.commits[selected];
-    const d = el('div', { class: 'detail' });
-    d.append(el('span', { class: 'hash' }, c.id), ' ');
-    const m = el('b', { dir: 'auto' }); m.textContent = c.msg; d.append(m);
-    d.append(` · נכתב על ידי ${c.author === 'Friend' ? 'חבר' : 'אתם'}. התמונה השמורה:`);
-    for (const p of Object.keys(c.tree).sort()) {
-      const pre = el('pre'); pre.textContent = `${p}:\n${c.tree[p]}`; d.append(pre);
-    }
-    root.append(d);
-  } else if (list.length < 3) {
-    root.append(el('div', { class: 'note', style: 'margin-top:4px', html: 'לחצו על נקודה כדי לראות מה נשמר בה.' }));
-  }
-}
-function renderInternals(root) {
-  if (!S.init) { root.append(el('div', { class: 'empty', html: 'אין עדיין תיקיית \u200E.git\u200E. היא נוצרת ב-git init.' })); return; }
-  const row = (p, v, w) => {
-    const r = el('div', { class: 'gitrow' });
-    const a = el('div', { class: 'p' }); a.textContent = p; r.append(a);
-    if (v) { const b = el('div', { class: 'v' }); b.textContent = v; r.append(b); }
-    const c = el('div', { class: 'w', html: w }); r.append(c);
-    root.append(r);
-  };
-  row('.git/HEAD', S.head.branch ? `ref: refs/heads/${S.head.branch}` : S.head.detached, 'איפה אתם עכשיו: מצביע על ענף.');
-  for (const n of Object.keys(S.branches).sort()) row(`.git/refs/heads/${n}`, S.branches[n], 'ענף הוא קובץ קטן: רק hash של commit.');
-  if (!Object.keys(S.branches).length) row('.git/refs/heads/', '', 'ריק. אין commits, אז אין ענפים.');
-  for (const n of Object.keys(S.remoteRefs).sort()) row(`.git/refs/remotes/${n}`, S.remoteRefs[n], 'מה שידוע לכם על GitHub, מהפעם האחרונה שדיברתם איתו.');
-  const idx = Object.keys(S.index).sort();
-  row('.git/index', idx.join('  ') || '(empty)', 'אזור ההכנה: כך נראה ה-commit הבא.');
-  const vis = visibleCommits();
-  const blobs = new Set(), trees = new Set();
-  vis.forEach(c => { trees.add(JSON.stringify(c.tree)); Object.values(c.tree).forEach(b => blobs.add(b)); });
-  row('.git/objects/', `commits: ${vis.length}, trees: ${trees.size}, blobs: ${blobs.size}`, 'המידע עצמו: כל שמירה וכל גרסה של כל קובץ, דחוסים. נכתב ולא נמחק.');
-  row('.git/config', configText(), 'הגדרות הפרויקט, כולל כתובת ה-GitHub.');
+  root.append(svg);
+  root.scrollLeft = root.scrollWidth;
 }
 function render() {
-  renderZones();
-  renderPanel();
+  renderStations(); renderPaper(); renderTimeline();
   $('prompt').textContent = promptText();
 }
 function playAnims() {
   for (const a of anims) {
     const f = $('z-' + a.from).getBoundingClientRect(), t = $('z-' + a.to).getBoundingClientRect();
-    const col = { wd: '--wd', stage: '--stage', repo: '--repo', remote: '--remote' }[a.to];
-    const e = el('div', { class: 'fly', style: `background:var(${col});left:${f.left + f.width / 2 - 30}px;top:${f.top + f.height / 2}px` });
-    e.textContent = a.text;
+    const e = el('div', { class: 'fly', style: `left:${f.left + f.width / 2 - 24}px;top:${f.top + 16}px` });
+    e.textContent = a.text.length > 11 ? a.text.slice(0, 10) + '…' : a.text;
     document.body.append(e);
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      e.style.transform = `translate(${t.left - f.left + (t.width - f.width) / 2}px,${t.top - f.top + (t.height - f.height) / 2}px)`;
+      e.style.transform = `translate(${t.left - f.left}px,${t.top - f.top}px)`;
       e.style.opacity = 0;
     }));
-    setTimeout(() => e.remove(), 700);
+    setTimeout(() => e.remove(), 800);
     const z = $('z-' + a.to);
-    setTimeout(() => { z.classList.remove('hit'); void z.offsetWidth; z.classList.add('hit'); }, 420);
+    setTimeout(() => { z.classList.remove('hit'); void z.offsetWidth; z.classList.add('hit'); }, 480);
   }
   anims = [];
 }
 let toastT;
 function toast(msg) {
   document.querySelector('.toast')?.remove();
-  const t = el('div', { class: 'toast', role: 'status' }); t.textContent = msg; document.body.append(t);
-  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 4500);
+  const t = el('div', { class: 'toast', role: 'status' }); t.textContent = T(msg); document.body.append(t);
+  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 3500);
 }
+let typeT;
+function typed(cmd) {
+  const s = $('strip'); s.textContent = ''; let i = 0;
+  clearInterval(typeT);
+  typeT = setInterval(() => { s.textContent = cmd.slice(0, ++i); s.scrollLeft = s.scrollWidth; if (i >= cmd.length) clearInterval(typeT); }, 14);
+}
+function checkStep() {}
 
-/* ---------- editor ---------- */
 function openEditor(p) {
-  if (p.startsWith('.git/')) { tip('לא עורכים ידנית קבצים בתוך \u200E.git\u200E.'); return; }
+  if (p.startsWith('.git/')) { tip('לא עורכים ידנית קבצים בתוך ‎.git‎.'); return; }
   const ta = el('textarea', { dir: 'auto', 'aria-label': p });
   ta.value = S.files[p] || '';
   const close = () => ov.remove();
-  const save = () => { S.files[p] = fileNorm(ta.value); close(); anims = []; afterChange(); focusTerm(); };
-  const nameEl = el('code'); nameEl.textContent = p;
-  const ov = el('div', { class: 'overlay', onkeydown: e => { if (e.key === 'Escape') close(); } },
-    el('div', { class: 'dialog editor' },
-      el('h3', {}, 'עורכים את ', nameEl),
-      ta,
-      el('div', { class: 'note', html: 'גיט לא יודע על השינוי עד שתריצו add ו-commit.' }),
-      el('button', { class: 'primary', onclick: save }, 'שמירת הקובץ'),
-      el('button', { class: 'ghost', onclick: close }, 'ביטול')));
+  const save = () => { S.files[p] = fileNorm(ta.value); close(); anims = []; afterChange(); };
+  const ov = el('div', { class: 'overlay' }, el('div', { class: 'dialog editor left' },
+    el('p', { class: 'ltr' }, p), ta,
+    el('button', { class: 'primary', onclick: save }, T('שמירת הקובץ')),
+    el('button', { class: 'ghost', onclick: close }, T('ביטול'))));
   document.body.append(ov);
-  ta.focus();
 }
 
-/* ---------- the lesson ---------- */
+/* ---------- the game ---------- */
+const CARDS = {
+  init: ['git init', 'להפעיל גיט'], status: ['git status', 'מה המצב?'], add: ['git add', 'לשים בארגז'],
+  commit: ['git commit', 'לסגור ולשמור'], push: ['git push', 'לשלוח לענן'], pull: ['git pull', 'להביא מהענן'],
+  diff: ['git diff', 'מה השתנה?'], log: ['git log', 'כל השמירות'], restore: ['git restore', 'לבטל שינוי'],
+  branch: ['git switch -c', 'ענף חדש'], back: ['git switch main', 'חזרה ל-main'], merge: ['git merge', 'לאחד ענפים'],
+  clone: ['git clone', 'להוריד הכול'], remote: ['git remote add', 'לחבר לשרת'],
+};
+const URL_ = 'https://github.com/you/hummus.git';
 const FIRST = () => visibleCommits()[0]?.id || '';
-let friendA = null, friendB = null;
 const editFile = fn => { S.files[FILE] = fn(S.files[FILE] || ''); anims = []; afterChange(); };
-const CHAPTERS = ['שומרים', 'חוזרים בזמן', 'ענפים', 'עובדים עם אחרים', 'קונפליקט'];
-const STEPS = [
-  { ch: 0, title: 'הופכים תיקייה לפרויקט גיט', focus: ['wd'],
-    body: 'למעלה, ב<b>תיקיית העבודה</b>, יש קובץ אחד: מתכון החומוס שלנו. גיט עוד לא יודע עליו כלום. נתחיל:',
-    cmds: ['git init'], check: () => S.init,
-    done: 'נוצרה תיקייה נסתרת בשם <code>.git</code>. <b>זה כל הסוד:</b> כל ההיסטוריה של הפרויקט יושבת שם, על המחשב שלכם. מוחקים אותה, וההיסטוריה נעלמה. הקבצים נשארים.' },
-  { ch: 0, title: 'מה המצב?', focus: ['wd'],
-    body: 'הפקודה שמריצים הכי הרבה. בכל פעם שמתבלבלים, מתחילים ממנה:',
-    cmds: ['git status'], check: () => ran.has('status'),
-    done: '<b>Untracked</b> אומר: גיט רואה את הקובץ, אבל עוד לא שומר אותו.' },
-  { ch: 0, title: 'שמים בארגז', focus: ['wd', 'stage'],
-    body: 'שמירה בגיט היא שני שלבים. קודם בוחרים מה ייכנס לשמירה, כמו לשים דברים בארגז לפני שסוגרים אותו. הארגז נקרא <b>אזור ההכנה</b> (staging).',
-    cmds: ['git add hummus.txt'], check: () => S.index[FILE] !== undefined,
-    done: 'הקובץ עבר לאזור ההכנה. למה צריך שלב כזה? כי לפעמים שיניתם 10 קבצים ורוצים לשמור רק 3 מהם.' },
-  { ch: 0, title: 'סוגרים את הארגז', focus: ['stage', 'repo'],
-    body: '<b>commit</b> הוא תמונה של כל הפרויקט ברגע הזה, עם הודעה שמסבירה מה עשיתם. ככה שומרים:',
-    cmds: ['git commit -m "first recipe"'], check: () => !!headId(),
-    done: 'נשמר! למטה בגרף יש נקודה ראשונה, עם <b>hash</b>: מזהה ייחודי של השמירה. שימו לב: לא היה צריך אינטרנט. הכול נשמר אצלכם.' },
-  { ch: 0, title: 'מציצים בתוך \u200E.git\u200E', focus: ['repo'], tab: 'git',
-    body: 'איפה זה נשמר בפועל? בלשונית <b>בתוך \u200E.git\u200E</b> למטה רואים את הקבצים האמיתיים. נקרא אחד מהם:',
-    cmds: ['cat .git/HEAD'], check: () => ran.has('catHead'),
-    done: '<code>HEAD</code> אומר איפה אתם עכשיו: על <code>main</code>. ו-<code>main</code> הוא קובץ קטן שיש בו רק hash של commit. זה כל המנגנון, קבצי טקסט קטנים.' },
-
-  { ch: 1, title: 'משנים ובודקים מה השתנה', focus: ['wd'], tab: 'graph',
-    body: 'בחיים האמיתיים עורכים קבצים בעורך רגיל. פה: לחצו על הכפתור, ואז בקשו מגיט להראות מה השתנה.',
-    actions: [{ label: '✏️ מוסיפים טחינה', once: true, run: () => editFile(t => t + 'טחינה\n') }],
-    cmds: ['git diff'], check: () => ran.has('diff'),
-    done: 'ירוק עם <code>+</code> זו שורה שנוספה. אדום עם <code>-</code> זו שורה שנמחקה. גיט משווה את הקובץ לגרסה שהוא מכיר.' },
-  { ch: 1, title: 'עכשיו לבד: שומרים', focus: ['stage', 'repo'], self: true,
-    body: 'שמרו את השינוי, עם אותם שני שלבים. טיפ: <code>git add .</code> (עם נקודה) מוסיף את כל מה שהשתנה.',
-    cmds: ['git add .', 'git commit -m "add tahini"'], check: () => !!headId() && ancestors(headId()).size >= 2,
-    done: 'שתי נקודות בגרף. זו כל העבודה היומיומית: עורכים, <code>add</code>, <code>commit</code>, וחוזר חלילה.' },
-  { ch: 1, title: 'ההיסטוריה', focus: ['repo'],
-    body: 'כל השמירות, מהחדשה לישנה:',
-    cmds: ['git log --oneline'], check: () => ran.has('log'),
-    done: 'הודעות טובות הן מתנה לעצמכם בעוד חצי שנה. לאותו מידע עם שם ותאריך: <code>git log</code> בלי תוספות.' },
-  { ch: 1, title: 'קופצים לעבר', focus: ['repo', 'wd'],
-    body: 'נחזור לשמירה הראשונה. הסתכלו על הקובץ למעלה כשזה קורה:',
-    cmds: () => ['git checkout ' + FIRST()], check: () => !!S.head.detached && S.head.detached === FIRST(),
-    done: '<b>הטחינה נעלמה מהקובץ.</b> גיט כתב מחדש את התיקייה כמו שהיתה אז. כלום לא נמחק, הכול עדיין ב-<code>.git</code>. בגרף רואים ש-<code>HEAD</code> זז אחורה.' },
-  { ch: 1, title: 'חוזרים להווה', focus: ['wd'],
-    body: 'מצב כזה נקרא <b>detached HEAD</b>: מסתכלים, לא עובדים. חוזרים:',
-    cmds: ['git switch main'], check: () => S.head.branch === 'main',
-    done: 'הטחינה חזרה. ככה מבקרים בכל רגע בהיסטוריה של הפרויקט.' },
-  { ch: 1, title: 'אסון! וביטול', focus: ['wd'],
-    body: 'קלקלו את הקובץ, ואז החזירו אותו לגרסה השמורה:',
-    actions: [{ label: '☕ שופכים קפה על הקובץ', once: true, run: () => editFile(() => 'xkq#@!! קפה בכל מקום\n') }],
-    cmds: ['git restore hummus.txt'], check: () => ran.has('restore') && S.files[FILE] === headTree()[FILE],
-    done: 'הקובץ חזר. <b>אבל זהירות:</b> שינוי שלא עשיתם לו commit נמחק לתמיד ב-restore. גיט מגן רק על מה ששמרתם, אז שומרים לעתים קרובות.' },
-
-  { ch: 2, title: 'פותחים ענף', focus: ['repo'],
-    body: 'רוצים לנסות גרסה חריפה בלי לסכן את המתכון הטוב? פותחים <b>ענף</b> (branch): קו עבודה נפרד.',
-    cmds: ['git switch -c spicy'], check: () => S.head.branch === 'spicy',
-    done: 'ענף הוא רק תווית שמצביעה על commit, ולכן הוא נוצר מיד. בגרף רואים ש-<code>HEAD</code> עבר ל-<code>spicy</code>.' },
-  { ch: 2, title: 'עובדים על הענף', focus: ['wd', 'repo'], self: true,
-    body: 'הוסיפו צ\'ילי ושמרו, לבד:',
-    actions: [{ label: '🌶️ מוסיפים צ\'ילי', once: true, run: () => editFile(t => t + 'צ\'ילי\n') }],
-    cmds: ['git add .', 'git commit -m "add chili"'],
-    check: () => !!S.branches.spicy && S.branches.spicy !== S.branches.main && isAncestor(S.branches.main, S.branches.spicy),
-    done: '<code>spicy</code> התקדם, ו-<code>main</code> נשאר מאחור, בלי צ\'ילי.' },
-  { ch: 2, title: 'קסם קטן', focus: ['wd'],
-    body: 'חוזרים ל-<code>main</code>. הסתכלו על הקובץ:',
-    cmds: ['git switch main'], check: () => S.head.branch === 'main',
-    done: '<b>הצ\'ילי נעלם מהקובץ!</b> הוא לא אבד, הוא ב-<code>spicy</code>. אותה תיקייה, וכל ענף הוא עולם משלו.' },
-  { ch: 2, title: 'ממזגים', focus: ['repo', 'wd'],
-    body: 'הטעימה הצליחה. מכניסים את <code>spicy</code> ל-<code>main</code>. תמיד עומדים על הענף <b>שמקבל</b> את השינויים (ואנחנו על main):',
-    cmds: ['git merge spicy'], check: () => isAncestor(S.branches.spicy, S.branches.main),
-    done: '<b>Fast-forward</b>: בינתיים לא נוסף כלום ל-<code>main</code>, אז גיט פשוט קידם את התווית. הצ\'ילי בקובץ.' },
-
-  { ch: 3, title: 'מחברים את GitHub', focus: ['remote'],
-    body: 'עד עכשיו הכול היה רק אצלכם. <b>גיט הוא הכלי. GitHub הוא אתר</b> ששומר עוד עותק של אותו <code>.git</code>. מחברים אליו כתובת, ו-<code>origin</code> הוא רק כינוי לכתובת הזו:',
-    cmds: ['git remote add origin https://github.com/you/hummus.git'], check: () => !!S.remote,
-    done: 'הכתובת נכתבה ב-<code>.git/config</code>. עוד לא נשלח שום דבר.' },
-  { ch: 3, title: 'דוחפים', focus: ['repo', 'remote'],
-    body: 'שולחים את ה-commits לשרת:',
-    cmds: ['git push -u origin main'], check: () => !!S.remote && !!S.remote.branches.main && S.remote.branches.main === S.branches.main,
-    done: 'עכשיו יש עותק מלא ב-GitHub: המחשב נשרף, הפרויקט חי. <code>-u</code> זוכר את החיבור, ובפעם הבאה מספיק <code>git push</code>. מחשב חדש? <code>git clone</code> מוריד את הכול.' },
-  { ch: 3, title: 'חבר עבד בינתיים', focus: ['remote', 'repo', 'wd'],
-    enter: () => {
-      friendA = friendPush(t => { t[FILE] = fileNorm(t[FILE] || '') + 'פפריקה\n'; }, 'add paprika');
-      toast('חבר דחף ל-GitHub: הוסיף פפריקה');
-    },
-    body: 'חבר דחף ל-GitHub שינוי והוסיף פפריקה. אצלכם היא עוד לא קיימת: גיט לא מסתנכרן לבד. מושכים:',
-    cmds: ['git pull'], check: () => !!friendA && isAncestor(friendA, S.branches.main),
-    done: '<code>pull</code> הוא שני דברים: מוריד commits (<code>fetch</code>) וממזג אותם (<code>merge</code>). הנקודה הכחולה בגרף היא של החבר.' },
-
-  { ch: 4, title: 'שניכם שיניתם אותה שורה', focus: ['wd', 'remote'],
-    enter: () => {
-      friendB = friendPush(t => { t[FILE] = t[FILE].replace('מלח\n', 'הרבה מלח\n'); }, 'more salt');
-      toast('חבר דחף שינוי: "הרבה מלח"');
-    },
-    body: 'החבר שינה את שורת המלח ל"הרבה מלח". עכשיו שנו אותה גם אתם, שמרו ומשכו. (<code>-am</code> הוא add ו-commit ביחד, לקבצים שגיט כבר מכיר.)',
-    actions: [{ label: '🧂 משנים ל"קצת מלח"', once: true, run: () => editFile(t => t.replace('מלח\n', 'קצת מלח\n')) }],
-    cmds: ['git commit -am "less salt"', 'git pull'],
-    check: () => (S.merging && S.merging.conflicts.length > 0) || (!!friendB && isAncestor(friendB, S.branches.main)),
-    done: '<b>CONFLICT זו לא תקלה.</b> גיט פשוט לא יודע מי צודק, אז הוא כתב את שתי הגרסאות בתוך הקובץ, בין הסימנים <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> ו-<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>. הסתכלו בקובץ למעלה. שינויים בשורות <b>שונות</b> גיט ממזג לבד.' },
-  { ch: 4, title: 'אתם מחליטים', focus: ['wd', 'stage', 'repo', 'remote'],
-    body: 'קונפליקט הוא רק טקסט בקובץ. בחרו גרסה (בחיים: עורכים ביד ומוחקים את הסימנים), ואז שומרים ודוחפים:',
-    actions: [
-      { label: 'שלי', run: () => resolveConflict('ours') },
-      { label: 'של החבר', run: () => resolveConflict('theirs') },
-      { label: 'שתיהן', run: () => resolveConflict('both') },
-    ],
-    cmds: ['git add .', 'git commit -m "settle the salt"', 'git push'],
-    check: () => !S.merging && !!S.remote && S.remote.branches.main === S.branches.main && !!friendB && isAncestor(friendB, S.branches.main),
-    done: 'בגרף רואים שני קווים שמתאחדים ל-commit אחד עם שני הורים. זה כל מה שצריך כדי לעבוד עם גיט.' },
-];
+let friendA, friendB;
 function resolveConflict(mode) {
   const re = /<{7} .*\n([\s\S]*?)={7}\n([\s\S]*?)>{7} .*\n/g;
-  if (!re.test(S.files[FILE] || '')) { toast('אין קונפליקט בקובץ'); return; }
-  editFile(t => t.replace(re, (_, o, th) => mode === 'ours' ? o : mode === 'theirs' ? th : o + th));
+  S.files[FILE] = (S.files[FILE] || '').replace(re, (_, o, th) => mode === 'ours' ? o : mode === 'theirs' ? th : o + th);
+  anims = []; afterChange();
 }
-
-let stepI = 0, stepDone = false, usedActions = new Set(), showSelf = false;
-function enterStep(i) {
-  stepI = i; stepDone = false; ran = new Set(); usedActions = new Set(); showSelf = false;
-  const s = STEPS[i];
-  if (s) {
-    if (s.tab) tab = s.tab;
-    if (s.enter) s.enter();
-  } else tab = 'graph';
-  render();
-  renderMission();
-  checkStep();
-  focusTerm();
-}
-function checkStep() {
-  const s = STEPS[stepI];
-  if (!s || stepDone || !s.check()) return;
-  stepDone = true;
-  renderMission();
-  const m = $('mission');
-  m.scrollTop = m.scrollHeight;
-  if (innerWidth <= 980) m.querySelector('.done')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-}
-function next() { if (stepDone) enterStep(stepI + 1); }
-function fillCmd(c) { const i = $('tinput'); i.value = c; i.focus(); }
-function focusTerm() { if (matchMedia('(pointer:fine)').matches) $('tinput').focus(); }
-
-function renderMission() {
-  const m = $('mission'); m.textContent = '';
-  const s = STEPS[stepI];
-  document.querySelectorAll('.zone').forEach(z => z.classList.remove('focus'));
-  $('bar').style.width = (Math.min(stepI + (stepDone ? 1 : 0), STEPS.length) / STEPS.length * 100) + '%';
-  if (!s) { $('where').textContent = 'סיימתם!'; return renderFinish(m); }
-  $('where').textContent = `פרק ${s.ch + 1} מתוך ${CHAPTERS.length} · צעד ${stepI + 1}/${STEPS.length}`;
-  (s.focus || []).forEach(z => $('z-' + z).classList.add('focus'));
-  m.append(el('div', { class: 'chapter', html: `פרק ${s.ch + 1}: ${CHAPTERS[s.ch]}` }));
-  m.append(el('h2', { html: s.title }));
-  m.append(el('p', { html: s.body }));
-  if (s.actions) {
-    const row = el('div', { class: 'actions' });
-    s.actions.forEach((a, i) => {
-      const b = el('button', { class: 'action', onclick: () => {
-        if (a.once) usedActions.add(i);
-        a.run();
-        if (a.once) b.disabled = true;
-        focusTerm();
-      } }, a.label);
-      if (usedActions.has(i)) b.disabled = true;
-      row.append(b);
-    });
-    m.append(row);
-  }
-  const cmds = typeof s.cmds === 'function' ? s.cmds() : s.cmds;
-  if (s.self && !showSelf && !stepDone) {
-    m.append(el('button', { class: 'linkbtn', onclick: () => { showSelf = true; renderMission(); } }, 'תקועים? הראו לי את הפקודות'));
-  } else {
-    const box = el('div', { class: 'chips' });
-    cmds.forEach(c => box.append(el('button', { class: 'chip', onclick: () => fillCmd(c) }, c)));
-    m.append(box);
-    if (stepI < 2) m.append(el('div', { class: 'chiphint', html: 'הקלידו בטרמינל (עדיף, ככה זוכרים), או לחצו על הפקודה כדי להעתיק אותה לשם, ואז Enter.' }));
-  }
-  if (stepDone) {
-    const d = el('div', { class: 'done' });
-    d.append(el('b', {}, '✓ '), el('span', { html: s.done }));
-    d.append(el('button', { class: 'next', onclick: next }, stepI === STEPS.length - 1 ? 'סיום' : 'הבא'));
-    if (matchMedia('(pointer:fine)').matches) d.append(el('div', { class: 'kbd', html: 'או Enter בטרמינל' }));
-    m.append(d);
-  }
-}
-
-const QUIZ = [
-  { q: 'עשיתם commit בלי אינטרנט. איפה הוא נשמר?',
-    a: ['בתיקייה \u200E.git\u200E על המחשב שלכם', 'ב-GitHub', 'הוא יישמר רק כשיחזור האינטרנט'], ok: 0,
-    why: 'commit הוא מקומי לגמרי. רק push שולח לשרת.' },
-  { q: 'שיניתם קובץ והרצתם commit בלי add. מה נשמר?',
-    a: ['השינוי נשמר', 'השינוי לא נשמר: commit לוקח רק מה שב-staging', 'הקובץ נמחק'], ok: 1,
-    why: 'לכן git status לפני commit עושה חיים קלים.' },
-  { q: 'מה ההבדל בין Git ל-GitHub?',
-    a: ['אותו דבר', 'Git הוא הכלי, GitHub הוא אתר שמחזיק עותקים', 'GitHub הוא הגרסה החדשה של Git'], ok: 1,
-    why: 'Git עובד מצוין גם בלי GitHub. יש גם אתרים אחרים, כמו GitLab.' },
-  { q: 'מה זה ענף, פיזית?',
-    a: ['עותק של כל הקבצים', 'תיקייה נפרדת בדיסק', 'קובץ קטן עם hash של commit'], ok: 2,
-    why: 'לכן ענפים זולים ומהירים. פותחים אחד לכל משימה.' },
-  { q: 'git push נכשל עם rejected. מה עושים?',
-    a: ['git pull, ואז שוב push', 'git push --force', 'מוחקים את התיקייה ומורידים מחדש'], ok: 0,
-    why: 'בשרת יש commits שאין לכם. force היה דורס את העבודה של אחרים.' },
+const NOT_YET = 'עוד לא. אין פה גיט בכלל.';
+const EMPTY_BOX = 'הארגז ריק! commit שומר רק מה שבארגז.';
+const LEVELS = [
+  { name: 'שמירה ראשונה', e: '💾', learned: ['git init', 'git status', 'git add', 'git commit'], steps: [
+    { goal: 'גיט לא מכיר את התיקייה. הפעילו אותו.', card: 'init', cmd: 'git init', deck: ['add', 'commit', 'push'],
+      wrong: { add: NOT_YET, commit: NOT_YET, push: 'אין מה לשלוח, ואין לאן.' }, aha: 'נולדה תיקייה נסתרת: ‎.git‎. שם נשמר הכול.' },
+    { goal: 'מה המצב עכשיו?', card: 'status', cmd: 'git status', deck: ['init', 'commit', 'push'],
+      wrong: { init: 'כבר הפעלתם.', commit: EMPTY_BOX }, aha: 'גיט רואה את הקובץ, אבל עוד לא שומר אותו.' },
+    { goal: 'שימו את המתכון בארגז', card: 'add', cmd: 'git add hummus.txt', deck: ['commit', 'push', 'status'],
+      wrong: { commit: EMPTY_BOX }, aha: 'בארגז בוחרים מה ייכנס לשמירה.' },
+    { goal: 'סגרו את הארגז ושמרו', card: 'commit', cmd: 'git commit -m "first recipe"', deck: ['add', 'push', 'status'],
+      wrong: { add: 'הוא כבר בארגז.', push: 'עוד לא נשמר כלום. אין מה לשלוח.' }, aha: '📸 נשמר! כל נקודה היא תמונה של הפרויקט. בלי אינטרנט.' },
+    { goal: 'איפה זה נשמר? לחצו על 🗄️', zone: 'repo', aha: 'הכול בקבצים קטנים, על המחשב שלכם.' },
+  ] },
+  { name: 'מכונת זמן', e: '⏰', learned: ['git diff', 'git log', 'git checkout', 'git restore'], steps: [
+    { goal: 'הוסיפו טחינה למתכון', tap: '🥣 מוסיפים טחינה', run: () => editFile(t => t + W('טחינה') + '\n'), aha: 'הקובץ השתנה, וגיט שם לב.' },
+    { goal: 'מה בדיוק השתנה?', card: 'diff', cmd: 'git diff', deck: ['commit', 'log', 'status'], after: () => { diffOn = true; },
+      wrong: { commit: EMPTY_BOX }, aha: 'ירוק = נוסף. אדום = נמחק.' },
+    { goal: 'שמרו. שלב ראשון:', card: 'add', cmd: 'git add .', deck: ['commit', 'push', 'log'], wrong: { commit: EMPTY_BOX }, aha: '' },
+    { goal: 'שלב שני:', card: 'commit', cmd: 'git commit -m "add tahini"', deck: ['add', 'push', 'log'], aha: 'זו כל העבודה היומית: add, ואז commit.' },
+    { goal: 'הציגו את כל השמירות', card: 'log', cmd: 'git log --oneline', deck: ['diff', 'push', 'status'], after: () => { logOn = true; }, aha: 'מהחדשה לישנה. לכל שמירה הודעה ומזהה.' },
+    { goal: 'קפצו לעבר: לחצו על הנקודה הראשונה 👇', dot: FIRST, cmdFn: () => 'git checkout ' + FIRST(), aha: '🤯 הטחינה נעלמה! הקובץ חזר לאותו רגע.' },
+    { goal: 'חזרו להווה', card: 'back', cmd: 'git switch main', deck: ['restore', 'commit', 'merge'], aha: 'היא חזרה. בגיט שום שמירה לא נעלמת.' },
+    { goal: '☕ נשפך קפה על הקובץ! הצילו אותו.', before: () => { S.files[FILE] = 'xkq#@!! ' + W('קפה בכל מקום') + '\n'; },
+      card: 'restore', cmd: 'git restore hummus.txt', deck: ['commit', 'add', 'push'],
+      wrong: { commit: 'אל תשמרו קפה! הוא ייכנס להיסטוריה.', add: 'ככה הקפה נכנס לארגז. לא זה.', push: 'אתם רוצים לשלוח קפה לכולם?' },
+      aha: '😮‍💨 ניצל! אבל רק מה ששמרתם אפשר להחזיר.' },
+  ] },
+  { name: 'עולמות מקבילים', e: '🌶️', learned: ['git switch -c', 'git switch', 'git merge'], steps: [
+    { goal: 'רוצים לנסות צ\'ילי בלי לסכן את המתכון', card: 'branch', cmd: 'git switch -c spicy', deck: ['commit', 'merge', 'restore'],
+      wrong: { commit: 'אין מה לשמור, ועוד תלכלכו את המתכון הטוב.', merge: 'אין עדיין מה לאחד.' }, aha: 'ענף = עולם מקביל. המקור מוגן.' },
+    { goal: 'הוסיפו צ\'ילי', tap: '🌶️ מוסיפים צ\'ילי', run: () => editFile(t => t + W("צ'ילי") + '\n'), aha: '' },
+    { goal: 'שמרו. שלב ראשון:', card: 'add', cmd: 'git add .', deck: ['commit', 'merge', 'back'], wrong: { commit: EMPTY_BOX }, aha: '' },
+    { goal: 'שלב שני:', card: 'commit', cmd: 'git commit -m "add chili"', deck: ['add', 'merge', 'back'], aha: 'רק הענף spicy התקדם.' },
+    { goal: 'חזרו ל-main ותסתכלו על המתכון', card: 'back', cmd: 'git switch main', deck: ['commit', 'merge', 'restore'],
+      wrong: { merge: 'עומדים עדיין על spicy. קודם חוזרים ל-main.' }, aha: '🤯 הצ\'ילי נעלם! הוא מחכה בענף שלו.' },
+    { goal: 'היה טעים. הכניסו אותו למתכון הראשי!', card: 'merge', cmd: 'git merge spicy', deck: ['commit', 'restore', 'push'], aha: 'עכשיו הצ\'ילי גם ב-main.' },
+  ] },
+  { name: 'הענן', e: '☁️', learned: ['git remote add', 'git push', 'git clone', 'git pull'], steps: [
+    { goal: 'עד עכשיו הכול רק אצלכם. חברו את GitHub.', card: 'remote', cmd: 'git remote add origin ' + URL_, deck: ['push', 'pull', 'clone'],
+      wrong: { push: 'לאן? עוד לא חיברתם שרת.', pull: 'מאיפה? עוד לא חיברתם שרת.' }, aha: 'גיט הוא הכלי. GitHub הוא רק עוד עותק.' },
+    { goal: 'שלחו את השמירות לענן', card: 'push', cmd: 'git push -u origin main', deck: ['pull', 'clone', 'commit'], aha: 'יש לכם גיבוי מלא.' },
+    { goal: '🔥 המחשב נשרף! החזירו את הכול.', before: () => { burned = true; }, card: 'clone', deck: ['push', 'pull', 'init'],
+      wrong: { push: 'המחשב נשרף. אין ממנו מה לשלוח.', pull: 'pull עובד רק בתוך פרויקט קיים. אין פה כלום.', init: 'זה פרויקט ריק. ההיסטוריה שלכם בענן.' },
+      custom: () => {
+        burned = false; prevLines = new Set();
+        out(`$ git clone ${URL_}\nCloning into 'hummus'...`);
+        typed('git clone ' + URL_); fly('remote', 'repo', 'clone'); fly('repo', 'wd', FILE); afterChange();
+      }, aha: '🎉 כל ההיסטוריה חזרה מהענן!' },
+    { goal: 'חבר הוסיף פפריקה ודחף לענן. הביאו אותה.',
+      before: () => { friendA = friendPush(t => { t[FILE] = fileNorm(t[FILE] || '') + W('פפריקה') + '\n'; }, 'add paprika'); hit('z-remote'); },
+      card: 'pull', cmd: 'git pull', deck: ['push', 'clone', 'merge'],
+      wrong: { push: 'נדחה! בענן יש משהו שאין לכם. קודם מביאים.', clone: 'כבר יש לכם את הפרויקט. צריך רק את החדש.' }, aha: 'הנקודה הכחולה היא של החבר.' },
+  ] },
+  { name: 'מלחמת המלח', e: '🧂', learned: ['CONFLICT', 'git add', 'git commit', 'git push'], steps: [
+    { goal: 'החבר דחף "הרבה מלח". אתם רוצים קצת.',
+      before: () => { friendB = friendPush(t => { t[FILE] = t[FILE].replace(W('מלח') + '\n', W('הרבה מלח') + '\n'); }, 'more salt'); hit('z-remote'); },
+      tap: '🧂 משנים ל"קצת מלח"', run: () => editFile(t => t.replace(W('מלח') + '\n', W('קצת מלח') + '\n')), aha: '' },
+    { goal: 'שמרו את השינוי', card: 'commit', cmd: 'git commit -am "less salt"', deck: ['pull', 'push', 'restore'],
+      wrong: { pull: 'קודם שומרים, ורק אז מביאים.', push: 'עוד לא שמרתם.', restore: 'זה ימחק את השינוי שלכם.' }, aha: 'עכשיו גם אתם וגם החבר שיניתם אותה שורה.' },
+    { goal: 'הביאו את השינוי של החבר', card: 'pull', cmd: 'git pull', deck: ['push', 'merge', 'status'],
+      wrong: { push: 'נדחה! בענן יש שמירה שאין לכם.' }, aha: '💥 קונפליקט! לא תקלה: גיט שואל מי צודק.' },
+    { goal: 'אתם מחליטים: מה נשאר במתכון?', options: [['ours', 'קצת מלח'], ['theirs', 'הרבה מלח'], ['both', 'גם וגם']], aha: 'קונפליקט הוא רק טקסט בקובץ.' },
+    { goal: 'שמרו. שלב ראשון:', card: 'add', cmd: 'git add .', deck: ['commit', 'push', 'pull'], wrong: { commit: 'קודם מסמנים שפתרתם: add.' }, aha: '' },
+    { goal: 'שלב שני:', card: 'commit', cmd: 'git commit -m "settle the salt"', deck: ['add', 'push', 'pull'], aha: 'שני קווים התאחדו לנקודה אחת 👆' },
+    { goal: 'שלחו לחבר', card: 'push', cmd: 'git push', deck: ['pull', 'commit', 'merge'], aha: 'זהו. ככה עובדים בצוות.' },
+  ] },
+  { name: 'המבחן', e: '🏆', exam: true, learned: [], steps: [
+    { goal: 'שיניתם קובץ. שלב 1 מ-3 בדרך ל-GitHub:', card: 'add', deck: ['commit', 'push', 'pull'], aha: '' },
+    { goal: 'שלב 2 מ-3:', card: 'commit', deck: ['add', 'push', 'pull'], aha: '' },
+    { goal: 'שלב 3 מ-3:', card: 'push', deck: ['add', 'commit', 'pull'], aha: '✓ add, commit, push: זה 90% מהיום.' },
+    { goal: 'קלקלתם קובץ ועוד לא שמרתם', card: 'restore', deck: ['commit', 'pull', 'merge'], aha: '✓ חזר לגרסה השמורה.' },
+    { goal: 'יש לכם רעיון מסוכן לנסות', card: 'branch', deck: ['commit', 'restore', 'clone'], aha: '✓ ענף חדש, והמקור מוגן.' },
+    { goal: 'חבר דחף שינוי. איך מקבלים אותו?', card: 'pull', deck: ['push', 'clone', 'merge'], aha: '✓ pull.' },
+    { goal: 'מחשב חדש. איך מורידים את הפרויקט?', card: 'clone', deck: ['init', 'pull', 'add'], aha: '✓ clone.' },
+    { goal: 'התבלבלתם. מה מריצים קודם?', card: 'status', deck: ['restore', 'commit', 'diff'], aha: '✓ תמיד status.' },
+  ] },
 ];
-function renderFinish(m) {
-  m.append(el('h2', { html: 'זהו, אתם יודעים גיט 🎉' }));
-  m.append(el('p', { html: 'הטרמינל עדיין פתוח: משחקים חופשי. נסו ענף נוסף, <code>git revert</code>, <code>git stash</code>, או הכפתור <b>חבר דוחף שינוי</b> למעלה.' }));
-  m.append(el('p', { html: '<b>חמש שאלות אחרונות:</b>' }));
-  QUIZ.forEach(q => {
-    const box = el('div', { class: 'q' });
-    box.append(el('p', { html: q.q }));
-    const btns = q.a.map((t, i) => el('button', { onclick: () => {
-      btns.forEach((b, j) => { b.disabled = true; if (j === q.ok) b.classList.add('right'); else if (j === i) b.classList.add('wrong'); });
-      box.append(el('div', { class: 'why', html: q.why }));
-    } }, t));
-    btns.forEach(b => box.append(b));
-    m.append(box);
-  });
-  m.append(el('button', { class: 'next', onclick: openSheet }, 'דף הפקודות לשמירה'));
+const EXAM_FLY = { add: ['wd', 'stage'], commit: ['stage', 'repo'], push: ['repo', 'remote'], pull: ['remote', 'repo'], restore: ['repo', 'wd'], clone: ['remote', 'repo'] };
+const TOTAL = LEVELS.reduce((a, l) => a + l.steps.length, 0);
+let lv = 0, si = 0, busy = false, mistakes = 0, idleT, free = false, freeN = 0;
+const curStep = () => LEVELS[lv]?.steps[si];
+function hit(id) { const z = $(id); z.classList.remove('hit'); void z.offsetWidth; z.classList.add('hit'); }
+let bubbleRaw = ['', ''];
+function setBubble(aha, goal, bad) {
+  bubbleRaw = [bad ? '' : aha, goal];
+  const a = $('aha'); a.textContent = T(aha) || ''; a.className = 'aha' + (bad ? ' bad' : '');
+  a.style.display = aha ? '' : 'none';
+  void a.offsetWidth;
+  $('goal').textContent = T(goal);
 }
-
-/* ---------- dialogs ---------- */
-function showIntro() {
-  const ov = el('div', { class: 'overlay' },
-    el('div', { class: 'dialog', html: `
-      <h2>גיט הוא Save Game לתיקייה שלכם</h2>
-      <ul>
-        <li><b>כל שמירה (commit)</b> היא תמונה של כל הפרויקט, עם מי, מתי ולמה.</li>
-        <li><b>אפשר לחזור</b> לכל שמירה, ולעבוד במקביל על כמה כיוונים בלי לסכן את מה שעובד.</li>
-        <li><b>זה עובד בלי אינטרנט.</b> GitHub הוא רק אתר ששומר עוד עותק, כדי לעבוד עם אחרים.</li>
-      </ul>
-      <p>בחמש הדקות הקרובות נבנה יחד מתכון לחומוס. מקלידים פקודות אמיתיות, ורואים מה קורה לקבצים, ואיפה כל דבר נשמר.</p>
-      <p class="note">זה סימולטור בתוך הדף: הפקודות כמו בגיט האמיתי, אבל שום דבר לא נוגע במחשב שלכם. אי אפשר לשבור כלום.</p>` }));
-  const go = el('button', { class: 'primary', onclick: () => { ov.remove(); focusTerm(); } }, 'מתחילים');
-  ov.firstChild.append(go);
+function renderSegs() {
+  const s = $('segs'); s.textContent = '';
+  LEVELS.forEach((l, i) => {
+    const b = el('b'); b.style.width = (i < lv ? 100 : i === lv ? si / l.steps.length * 100 : 0) + '%';
+    s.append(el('i', {}, b));
+  });
+}
+function shuffle(a) { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function renderHand() {
+  const h = $('hand'); h.textContent = ''; h.className = 'hand';
+  const s = curStep();
+  $('z-repo').classList.remove('glow');
+  if (!s) return;
+  if (s.card) {
+    shuffle([s.card, ...s.deck]).forEach(id => {
+      const [c, cap] = CARDS[id];
+      const code = el('code'); code.textContent = c;
+      const card = el('button', { class: 'card', 'data-card': id, onclick: e => playCard(id, e.currentTarget) }, code);
+      if (!LEVELS[lv].exam) { const sp = el('span'); sp.textContent = T(cap); card.append(sp); }
+      h.append(card);
+    });
+  } else if (s.tap) {
+    h.append(el('button', { class: 'card big', onclick: () => finish(s, s.run) }, T(s.tap)));
+  } else if (s.options) {
+    h.classList.add('opts');
+    s.options.forEach(([m, label]) => h.append(el('button', { class: 'card opt', onclick: () => finish(s, () => resolveConflict(m)) }, T(label))));
+  } else if (s.zone) {
+    $('z-' + s.zone).classList.add('glow');
+  }
+}
+function startIdle() {
+  clearTimeout(idleT);
+  idleT = setTimeout(hintNow, 7000);
+}
+function hintNow() { const s = curStep(); if (s && s.card) document.querySelector(`.card[data-card="${s.card}"]`)?.classList.add('hint'); }
+function enter(aha) {
+  busy = false; glowDot = null;
+  const s = curStep();
+  if (s.before) { s.before(); }
+  if (s.dot) glowDot = s.dot();
+  render(); renderSegs();
+  setBubble(aha, s.goal);
+  renderHand();
+  startIdle();
+}
+function playCard(id, node) {
+  if (busy) return;
+  const s = curStep();
+  if (id !== s.card) {
+    mistakes++;
+    navigator.vibrate?.(60);
+    node.classList.remove('bad'); void node.offsetWidth; node.classList.add('bad');
+    const [c, cap] = CARDS[id];
+    setBubble(s.wrong?.[id] || L(`${c} זה "${cap}". נסו שוב.`, `${c} means "${T(cap)}". Try again.`), s.goal, true);
+    hintNow();
+    return;
+  }
+  finish(s, () => {
+    typed(LEVELS[lv].exam ? CARDS[id][0] : s.cmd || CARDS[id][0]);
+    if (s.custom) s.custom();
+    else if (LEVELS[lv].exam) { const f = EXAM_FLY[id]; if (f) { fly(f[0], f[1], '📄'); playAnims(); } }
+    else runLine(s.cmd);
+  });
+}
+function finish(s, action) {
+  if (busy) return;
+  busy = true; clearTimeout(idleT);
+  diffOn = logOn = false;
+  $('hand').textContent = ''; $('hand').className = 'hand';
+  navigator.vibrate?.(15);
+  action();
+  if (s.after) { s.after(); renderPaper(); }
+  si++;
+  renderSegs();
+  if (si >= LEVELS[lv].steps.length) {
+    setBubble(s.aha, '');
+    setTimeout(() => levelEnd(s.aha), 1300);
+  } else {
+    setBubble(s.aha, '');
+    setTimeout(() => enter(s.aha), s.aha ? 650 : 350);
+  }
+}
+function tapDot(id) {
+  const s = curStep();
+  if (!free && s && s.dot && !busy) {
+    if (id !== s.dot()) { setBubble('זו לא הראשונה. הראשונה היא השמאלית.', s.goal, true); return; }
+    finish(s, () => { const c = s.cmdFn(); typed(c); runLine(c); });
+    return;
+  }
+  const c = S.commits[id];
+  toast(`${c.id}: ${c.msg}`);
+}
+$('z-repo').addEventListener('click', () => {
+  const s = curStep();
+  if (free || !s || s.zone !== 'repo' || busy) { if (free && S.init) peekGit(); return; }
+  peekGit(() => finish(s, () => {}));
+});
+function peekGit(done) {
+  const row = (p, v, w) => {
+    const r = el('div', { class: 'row' });
+    const a = el('div', { class: 'p' }); a.textContent = p;
+    const b = el('div', { class: 'v' }); b.textContent = v;
+    const c = el('div', { class: 'w' }); c.textContent = T(w);
+    r.append(a, b, c); return r;
+  };
+  const vis = visibleCommits();
+  const close = () => { ov.remove(); done && done(); };
+  const ov = el('div', { class: 'overlay sheetwrap' }, el('div', { class: 'dialog sheet-up' },
+    el('h2', {}, T('בתוך התיקייה הנסתרת')),
+    row('.git/HEAD', S.head.branch ? `ref: refs/heads/${S.head.branch}` : S.head.detached, 'איפה אתם עכשיו'),
+    row(`.git/refs/heads/${S.head.branch || 'main'}`, headId() || '', 'ענף הוא קובץ קטן עם מזהה של שמירה'),
+    row('.git/objects/', `commits: ${vis.length}`, 'כל השמירות וכל הגרסאות של הקבצים'),
+    el('button', { class: 'primary', onclick: close }, T('הבנתי'))));
   document.body.append(ov);
-  go.focus();
+}
+const tr = (he, en) => lang === 'en' ? en : he;
+function levelEnd(aha) {
+  const L = LEVELS[lv];
+  if (lv === LEVELS.length - 1) return showFinish();
+  const go = () => { ov.remove(); lv++; si = 0; enter(''); };
+  const chips = el('div', { class: 'chips' });
+  L.learned.forEach(c => { const x = el('code'); x.textContent = c; chips.append(x); });
+  const t = el('p'); t.textContent = T(aha) || '';
+  const next = LEVELS[lv + 1];
+  const ov = el('div', { class: 'overlay' }, el('div', { class: 'dialog' },
+    el('div', { class: 'big-e' }, L.e), el('h2', {}, tr(`עברתם את "${L.name}"!`, `You beat "${T(L.name)}"!`)), t, chips,
+    el('button', { class: 'primary', onclick: go }, tr(`הלאה ל"${next.name}" ${next.e}`, `On to "${T(next.name)}" ${next.e}`))));
+  document.body.append(ov);
+}
+function showFinish() {
+  const stars = mistakes <= 2 ? 3 : mistakes <= 7 ? 2 : 1;
+  const rank = ['', 'מתלמד גיט', 'שף של גיט', 'מאסטר גיט'][stars];
+  const close = () => ov.remove();
+  const ar = L('←', '→');
+  const mapHtml = `<div><span class="i">📝</span>${T('התיקייה')}</div><div><code>add</code>${ar}</div>
+    <div><span class="i">📦</span>${T('הארגז')}</div><div><code>commit</code>${ar}</div>
+    <div><span class="i">🗄️</span><span class="ltr">.git</span></div><div><code>push</code>${ar}</div>
+    <div><span class="i">☁️</span>GitHub</div>`;
+  const ov = el('div', { class: 'overlay' }, el('div', { class: 'dialog' },
+    el('div', { class: 'stars' }, '⭐'.repeat(stars)),
+    el('h2', {}, T(rank)),
+    el('p', {}, T('כל מה שצריך, בתמונה אחת:')),
+    el('div', { class: 'map', html: mapHtml }),
+    el('button', { class: 'primary', onclick: () => { close(); enterFree(); } }, T('משחק חופשי')),
+    el('button', { class: 'ghost', onclick: openSheet }, T('📋 דף פקודות')),
+    el('button', { class: 'ghost', onclick: () => { close(); start(); } }, T('לשחק שוב'))));
+  document.body.append(ov);
+}
+const INGR = ['כמון', 'שום', 'פטרוזיליה', 'שמן זית'];
+function enterFree() {
+  free = true; lv = LEVELS.length; si = 0;
+  LEVELS.length && renderSegsDone();
+  $('tform').style.display = '';
+  setBubble('', 'משחק חופשי: נסו מה שבא לכם');
+  const h = $('hand'); h.textContent = ''; h.className = 'hand free';
+  const cmd = (label, line) => el('button', { class: 'card', onclick: () => freeRun(line()) }, el('code', {}, label));
+  h.append(
+    el('button', { class: 'card', onclick: () => { editFile(t => t + W(INGR[freeN++ % INGR.length]) + '\n'); } }, T('🥣 מרכיב')),
+    cmd('add', () => 'git add .'), cmd('commit', () => `git commit -m "save ${++freeN}"`),
+    cmd('status', () => 'git status'), cmd('log', () => 'git log --oneline'), cmd('diff', () => 'git diff'),
+    cmd('push', () => 'git push'), cmd('pull', () => 'git pull'),
+    el('button', { class: 'card', onclick: freePlayFriend }, T('🤝 חבר דוחף')),
+  );
+  render();
+  $('paper').onclick = () => openEditor(FILE);
+}
+function renderSegsDone() { $('segs').querySelectorAll('b').forEach(b => b.style.width = '100%'); }
+function freeRun(line) {
+  typed(line); runLine(line);
+  const last = $('tout').lastElementChild;
+  setBubble(failed && last ? last.textContent.replace('💡 ', '') : '', failed ? 'משחק חופשי' : 'משחק חופשי: ⌨️ מציג פלט מלא', failed);
 }
 function openSheet() {
   const table = (title, rows) => {
-    const t = el('div'); t.append(el('h3', { html: title }));
+    const t = el('div'); t.append(el('h3', { html: T(title) }));
     const tb = el('table');
     rows.forEach(([c, d]) => {
-      const tr = el('tr'); const a = el('td'); a.textContent = c; const b = el('td'); b.textContent = d;
+      const tr = el('tr'); const a = el('td'); a.textContent = T(c); const b = el('td'); b.textContent = T(d);
       tr.append(a, b); tb.append(tr);
     });
     t.append(tb); return t;
@@ -1513,7 +1564,7 @@ function openSheet() {
     table('ביטולים', [['git restore <file>', 'ביטול שינוי שלא נשמר (נמחק!)'], ['git restore --staged <file>', 'הוצאה מאזור ההכנה'], ['git revert <hash>', 'commit חדש שמבטל ישן (בטוח)'], ['git stash / git stash pop', 'החבאת שינויים לרגע, והחזרה'], ['git reset --hard <hash>', 'מחיקת עבודה וחזרה אחורה (מסוכן!)']]),
     table('איפה הכול נמצא', [['קבצים', 'תיקיית העבודה'], ['staging', '\u200E.git/index'], ['commits', '\u200E.git/objects'], ['ענפים', '\u200E.git/refs/heads'], ['איפה אני', '\u200E.git/HEAD'], ['כתובת השרת', '\u200E.git/config']]),
   );
-  const notes = el('div', { html: `
+  const notes = el('div', { html: L(`
     <h3>מה שונה במחשב אמיתי</h3>
     <ul class="note">
       <li>מתקינים מ-<code>git-scm.com</code>, ובפעם הראשונה מגדירים שם ומייל. בלי זה commit ייכשל.</li>
@@ -1521,12 +1572,20 @@ function openSheet() {
       <li>לפני push צריך ליצור את הפרויקט באתר GitHub ולהתחבר. הסיסמה הרגילה לא עובדת שם: משתמשים ב-<code>gh auth login</code> או מפתח SSH.</li>
       <li>אם <code>git pull</code> מבקש לבחור איך למזג: <code>git config pull.rebase false</code> מתנהג כמו פה.</li>
       <li>קובץ <code>.gitignore</code> מונה מה לא לשמור בגיט. <b>סיסמאות ומפתחות לא נכנסים לגיט לעולם</b>: גם אחרי מחיקה הם נשארים בהיסטוריה.</li>
-    </ul>` });
+    </ul>`, `
+    <h3>What is different on a real computer</h3>
+    <ul class="note">
+      <li>Install from <code>git-scm.com</code>, and set your name and email the first time. Without them, commit fails.</li>
+      <li>The first branch may be called <code>master</code>. <code>git init -b main</code> sets it to <code>main</code>.</li>
+      <li>Before pushing, create the project on GitHub and sign in. Your regular password does not work there: use <code>gh auth login</code> or an SSH key.</li>
+      <li>If <code>git pull</code> asks how to merge: <code>git config pull.rebase false</code> behaves like this game.</li>
+      <li>A <code>.gitignore</code> file lists what not to save in Git. <b>Passwords and keys never go into Git</b>: even after deleting them, they stay in the history.</li>
+    </ul>`) });
   const close = () => ov.remove();
   const ov = el('div', { class: 'overlay', onclick: e => { if (e.target === ov) close(); }, onkeydown: e => { if (e.key === 'Escape') close(); } },
-    el('div', { class: 'dialog wide' }, el('h2', { html: 'דף פקודות' }), sheet, notes,
-      el('button', { class: 'primary', onclick: close }, 'סגירה'),
-      el('button', { class: 'ghost', onclick: () => print() }, 'הדפסה')));
+    el('div', { class: 'dialog left' }, el('h2', { html: T('דף פקודות') }), sheet, notes,
+      el('button', { class: 'primary', onclick: close }, T('סגירה')),
+      el('button', { class: 'ghost', onclick: () => print() }, T('הדפסה'))));
   document.body.append(ov);
   ov.querySelector('.primary').focus();
 }
@@ -1536,24 +1595,69 @@ $('tform').addEventListener('submit', e => {
   e.preventDefault();
   const i = $('tinput'), line = i.value.trim();
   i.value = '';
-  if (!line) { next(); return; }
-  hist.push(line); histI = hist.length;
-  runLine(line);
+  if (line) { hist.push(line); histI = hist.length; runLine(line); }
 });
-$('tinput').addEventListener('keydown', e => {
-  if (e.key === 'ArrowUp' && histI > 0) { e.preventDefault(); e.target.value = hist[--histI]; }
-  if (e.key === 'ArrowDown') { e.preventDefault(); histI = Math.min(hist.length, histI + 1); e.target.value = hist[histI] || ''; }
-});
-$('tabGraph').onclick = () => { tab = 'graph'; renderPanel(); };
-$('tabGit').onclick = () => { tab = 'git'; renderPanel(); };
+$('btnTerm').onclick = () => { $('termWrap').style.display = ''; $('tout').scrollTop = $('tout').scrollHeight; };
+$('termClose').onclick = () => { $('termWrap').style.display = 'none'; };
 $('btnSheet').onclick = openSheet;
-$('btnReset').onclick = () => { if (confirm('להתחיל מחדש? כל מה שעשיתם יימחק.')) start(); };
+$('btnReset').onclick = () => { if (confirm(T('להתחיל מחדש?'))) start(); };
 function start() {
-  freshState(); selected = null; friendA = friendB = null; extraI = 0; tab = 'graph'; anims = [];
-  $('tout').textContent = '';
-  tip('זה הטרמינל. כותבים פה פקודות, כמו במחשב אמיתי. help מציג רשימה.');
-  enterStep(0);
+  freshState(); if (lang === 'en') convertState(WORDS); ran = new Set(); anims = []; failed = false;
+  lv = 0; si = 0; mistakes = 0; free = false; freeN = 0; extraI = 0; burned = false; diffOn = logOn = false;
+  prevLines = new Set(); friendA = friendB = null;
+  $('tout').textContent = ''; $('strip').textContent = ''; $('tform').style.display = 'none'; $('paper').onclick = null;
+  enter('');
 }
+function showIntro() {
+  const ov = el('div', { class: 'overlay' }, el('div', { class: 'dialog' },
+    el('div', { class: 'big-e' }, '🧆'), el('h2', {}, T('הצילו את החומוס')),
+    el('p', {}, T('גיט הוא Save Game לקבצים. לוחצים על קלפים, רואים מה קורה, ובסוף יודעים גיט.')),
+    el('button', { class: 'primary', onclick: () => ov.remove() }, T('יאללה')),
+    el('button', { class: 'ghost', id: 'introLang', onclick: () => { setLang(lang === 'en' ? 'he' : 'en'); ov.remove(); showIntro(); } }, L('🌐 Play in English', '🌐 לשחק בעברית'))));
+  document.body.append(ov);
+}
+/* The recipe is real file content, so switching language rewrites it everywhere, history included. */
+function convertState(map) {
+  const keys = Object.keys(map).sort((a, b) => b.length - a.length);
+  const conv = t => { let out = ''; for (let i = 0; i < t.length;) { const k = keys.find(k => t.startsWith(k, i)); if (k) { out += map[k]; i += k.length; } else out += t[i++]; } return out; };
+  const tree = o => { for (const p of Object.keys(o)) if (typeof o[p] === 'string') o[p] = conv(o[p]); };
+  tree(S.files); tree(S.index);
+  Object.values(S.commits).forEach(c => tree(c.tree));
+  S.stash.forEach(e => tree(e.files));
+}
+function applyLang() {
+  const h = document.documentElement;
+  h.lang = lang; h.dir = lang === 'en' ? 'ltr' : 'rtl';
+  document.title = L('הצילו את החומוס: משחק גיט', 'Save the hummus: a Git game');
+  const pl = document.querySelectorAll('.place span');
+  pl[0].textContent = T('💻 על המחשב שלכם'); pl[1].textContent = T('☁️ בענן');
+  document.querySelector('.term .bar').dir = h.dir;
+  document.querySelector('.term .bar b').textContent = T('הטרמינל: מה שרץ באמת');
+  $('btnLang').textContent = L('🌐 EN', '🌐 עב');
+  $('btnLang').setAttribute('aria-label', L('English', 'עברית'));
+  $('btnTerm').setAttribute('aria-label', L('טרמינל', 'Terminal'));
+  $('btnSheet').setAttribute('aria-label', T('דף פקודות'));
+  $('btnReset').setAttribute('aria-label', L('מההתחלה', 'Start over'));
+}
+function setLang(next) {
+  if (next === lang) return;
+  const back = Object.fromEntries(Object.entries(WORDS).map(([he, en]) => [en, he]));
+  convertState(next === 'en' ? WORDS : back);
+  lang = next;
+  try { localStorage.setItem('git-game-lang', lang); } catch (e) {}
+  prevLines = new Set();
+  applyLang();
+  render();
+  if (free) enterFree();
+  else {
+    setBubble(bubbleRaw[0], bubbleRaw[1]);
+    if (!busy) { renderHand(); if (curStep()?.dot) renderTimeline(); }
+  }
+}
+$('btnLang').onclick = () => setLang(lang === 'en' ? 'he' : 'en');
+try { lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('git-game-lang') || 'he'; } catch (e) {}
+if (lang !== 'en') lang = 'he';
+applyLang();
 start();
 showIntro();
 </script>
