@@ -82,6 +82,8 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .free .card{border-radius:10px;border-bottom-width:3px}
 .wide2{grid-column:span 2}
 @keyframes hintp{50%{box-shadow:0 0 0 4px var(--gold)}}
+.point{grid-column:1/-1;grid-row:span 2;display:flex;align-items:center;justify-content:center;font-size:52px;animation:nudge 1s infinite}
+@keyframes nudge{50%{transform:translateY(10px)}}
 .options{display:contents}
 .opt{grid-column:1/-1}
 .hand.opts{grid-auto-rows:40px}
@@ -150,7 +152,9 @@ html[dir=ltr] .t-tip{direction:ltr;text-align:left}
     <button class="icon" id="btnSheet" aria-label="דף פקודות">📋</button>
     <button class="icon" id="btnReset" aria-label="מההתחלה">↺</button>
   </div>
+  <div class="strip" id="strip" aria-hidden="true"></div>
   <div class="bubble" aria-live="polite"><div class="aha" id="aha"></div><div class="goal" id="goal"></div></div>
+  <div class="hand" id="hand"></div>
   <div class="place"><span>💻 על המחשב שלכם</span><span>☁️ בענן</span></div>
   <div class="stations">
     <div class="st" id="z-wd" style="--c:var(--wd)"></div>
@@ -160,8 +164,6 @@ html[dir=ltr] .t-tip{direction:ltr;text-align:left}
   </div>
   <div class="paper" id="paper"></div>
   <div class="timeline" id="graph"></div>
-  <div class="strip" id="strip" aria-hidden="true"></div>
-  <div class="hand" id="hand"></div>
 </div>
 <div class="overlay sheetwrap" id="termWrap" style="display:none">
   <div class="term">
@@ -1363,7 +1365,7 @@ const LEVELS = [
 ];
 const EXAM_FLY = { add: ['wd', 'stage'], commit: ['stage', 'repo'], push: ['repo', 'remote'], pull: ['remote', 'repo'], restore: ['repo', 'wd'], clone: ['remote', 'repo'] };
 const TOTAL = LEVELS.reduce((a, l) => a + l.steps.length, 0);
-let lv = 0, si = 0, busy = false, mistakes = 0, idleT, free = false, freeN = 0;
+let wrongHere = 0, lv = 0, si = 0, busy = false, mistakes = 0, idleT, free = false, freeN = 0;
 const curStep = () => LEVELS[lv]?.steps[si];
 function hit(id) { const z = $(id); z.classList.remove('hit'); void z.offsetWidth; z.classList.add('hit'); }
 let bubbleRaw = ['', ''];
@@ -1403,14 +1405,15 @@ function renderHand() {
   } else if (s.zone) {
     $('z-' + s.zone).classList.add('glow');
   }
+  if (s.zone || s.dot) h.append(el('div', { class: 'point', 'aria-hidden': 'true' }, '👇'));
 }
 function startIdle() {
   clearTimeout(idleT);
-  idleT = setTimeout(hintNow, 7000);
+  idleT = setTimeout(hintNow, 15000);
 }
 function hintNow() { const s = curStep(); if (s && s.card) document.querySelector(`.card[data-card="${s.card}"]`)?.classList.add('hint'); }
 function enter(aha) {
-  busy = false; glowDot = null;
+  busy = false; glowDot = null; wrongHere = 0;
   const s = curStep();
   if (s.before) { s.before(); }
   if (s.dot) glowDot = s.dot();
@@ -1428,7 +1431,7 @@ function playCard(id, node) {
     node.classList.remove('bad'); void node.offsetWidth; node.classList.add('bad');
     const [c, cap] = CARDS[id];
     setBubble(s.wrong?.[id] || L(`${c} זה "${cap}". נסו שוב.`, `${c} means "${T(cap)}". Try again.`), s.goal, true);
-    hintNow();
+    if (++wrongHere >= 2) hintNow(); else startIdle();
     return;
   }
   finish(s, () => {
@@ -1453,7 +1456,7 @@ function finish(s, action) {
     setTimeout(() => levelEnd(s.aha), 1300);
   } else {
     setBubble(s.aha, '');
-    setTimeout(() => enter(s.aha), s.aha ? 650 : 350);
+    setTimeout(() => enter(s.aha), s.aha ? 1000 : 400);
   }
 }
 function tapDot(id) {
